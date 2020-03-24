@@ -1,0 +1,49 @@
+<!doctype html>
+
+<html lang="en">
+<head>
+  <link rel="stylesheet" href="https://unpkg.com/purecss@1.0.1/build/pure-min.css" integrity="sha384-oAOxQR6DkCoMliIh8yFnu25d7Eq/PHS21PClpwjOTeU2jRSq11vu66rf90/cZr47" crossorigin="anonymous">
+  <link href='https://api.mapbox.com/mapbox-gl-js/v1.8.1/mapbox-gl.css' rel='stylesheet' />
+  <link rel="stylesheet" href="https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-directions/v4.0.2/mapbox-gl-directions.css" type="text/css"/>
+  <link rel="stylesheet" href="https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-geocoder/v4.4.2/mapbox-gl-geocoder.css" type="text/css"/>
+  <link rel="stylesheet" href="index.css">  
+
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta charset="utf-8">
+
+  <title>Vasttraffik Experiment</title>
+  <meta name="description" content="The HTML5 Herald">
+  <meta name="author" content="SitePoint99">
+
+  <!--<link rel="stylesheet" href="css/styles.css?v=1.0">-->
+
+</head>
+
+<body>
+  
+<div>
+  <div id="timerBox" class="timerBox"></div>
+  <div id="precBox" class="timerBox precButton">&lt;</div>
+  <div id='map' style='width: 100%; height: 100%; position:absolute; background-color:lemonchiffon;'></div><!--width: 375px; height: 812px;-->
+  <div id="bottomGreen" class="bottomGreenNormal">
+    <div id="possibleTripList" class="tripContainer"></div>
+    <div id="tripDetailsBox" class="tripDetailsContainer"></div>
+  </div>
+  <!--<div style="position: fixed; width:100%; height:100%; z-index: 11; text-align:center;">-->
+    <div id='inputBox' class="inputBoxNormal"> <!--style="background-color: white;color:gray; width:90%; max-width:400px; height:50px;
+      display: inline-block; border-radius: 6px; top: 57%; position: absolute; z-index:11;left: 50%; transform: translateX(-50%);"-->
+      <!--<i class="fas fa-search-location" style="position: fixed; top: 51%; transform: translateY(-50%); margin-left: 4%; font-size: x-large;"></i>-->
+      <div id="geocoder" class="geocoder" ></div> <!--style="position: absolute; z-index: 1; width: 50%; left: 50%; margin-left: -25%; top: 10px;"-->
+      <!--<input id="userDest" name="userDest" style="width: 85%; height: 100%; border-style:none; background-color: transparent; margin-left: 12%; font-size:larger;" value="" type="text" placeholder="On va où ?" autofocus="true">-->
+    </div>
+  <!--</div>-->
+</div>
+
+<script src='https://api.mapbox.com/mapbox-gl-js/v1.8.1/mapbox-gl.js'></script>
+<script src="https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-directions/v4.0.2/mapbox-gl-directions.js"></script>
+<script src="https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-geocoder/v4.4.2/mapbox-gl-geocoder.min.js"></script>
+<script src="https://kit.fontawesome.com/710f7a719a.js" crossorigin="anonymous"></script>
+<script src="js/scripts.js"></script>
+  
+</body>
+</html>

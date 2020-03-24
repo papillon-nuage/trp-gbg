@@ -1,0 +1,215 @@
+tr:hover{
+    border: 3px solid #458be6;
+    border-radius: 9px;
+}
+.timerBox{
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    z-index: 50;
+    background-color: white;
+    padding-left: 10px;
+    padding-right: 10px;
+    padding-bottom: 2px;
+    padding-top: 3px;
+    font-size: xx-large;
+    border-radius: 8px;
+    box-shadow: 0 0 10px 2px rgba(0,0,0,.1);
+}
+.precButton{
+    left: 10px;
+    right: unset;
+    border-radius: 10px;
+    display: none;
+}
+.bottomGreenNormal{
+    background-color:rgb(55, 171, 46);
+    z-index: 9;
+    width: 100%;
+    height: 40%;
+    bottom: 0;
+    position: fixed;
+    border-top-left-radius: 10px;
+    border-top-right-radius: 10px;
+}
+.bottomGreenExtended{
+    height:75%;
+    transition: height 1.5s ease;
+    overflow-y: auto;
+}
+.inputBoxNormal{
+    background-color: white;
+    color: gray;
+    width: 90%;
+    max-width: 450px;
+    height: 50px;
+    display: inline-block;
+    border-radius: 6px;
+    top: 57%;
+    position: absolute;
+    z-index: 11;
+    left: 50%;
+    transform: translateX(-50%);
+    min-width: 250px;
+    box-shadow: 0 0 10px 2px rgba(0,0,0,.1);
+}
+.inputBoxExtended{
+    top: 19.8%;
+    transition: top 1.5s ease;
+}
+#geocoder{
+    position: absolute;
+    width: 100%;
+    height: 50px;
+}
+.mapboxgl-ctrl-geocoder.mapboxgl-ctrl{
+    height: 100%;
+    width: 100%;
+    margin-left: 0px;
+    box-shadow: none;
+    max-width: calc(100% - 40px);
+}
+.mapboxgl-ctrl-geocoder--icon-search{
+    left: 13px;
+    width: 30px;
+    height: 30px;
+    margin-top: 3px; 
+    top: 8px;       
+}
+div.mapboxgl-ctrl-geocoder.mapboxgl-ctrl input[type="text"].mapboxgl-ctrl-geocoder--input{
+    height: 50px;
+    margin-left: 40px;
+    font-size: larger;
+}
+div.mapboxgl-ctrl-geocoder--pin-right button.mapboxgl-ctrl-geocoder--button{
+    margin-right: -27px;
+    right: 0px;
+    top: 15px;
+}
+svg.mapboxgl-ctrl-geocoder--icon-close{
+    width: 16px;
+    height: 16px;
+    margin-top: 3px;
+    margin-right: 0;
+}
+
+.tripContainer{
+    z-index: 19;
+    position: relative;
+    /*background-color: #cdc2c2;*/
+    width: 93%;
+    left: 50%;
+    transform: translateX(-50%);
+    min-width: 250px;
+    top: 5%;
+    padding-bottom: 10px;
+    height: 100%;
+    /*padding-top: 10px;*/
+}
+
+.singleTripBox{    
+    position: relative;
+    background-color: white;
+    width: 95%;
+    max-width: 450px;
+    height: 60px;
+    left: 50%;
+    transform: translateX(-50%);
+    margin-bottom: 15px;
+    box-shadow: 0 0 10px 2px rgba(0,0,0,.1);
+    border-radius: 6px;
+    padding: 4px;
+    padding-left: 15px;
+}
+
+.busLeg{
+    display: inline-block;
+    /*background-color: cornflowerblue;*/
+    color: white;
+    padding-top: 2px;
+    padding-bottom: 2px;
+    padding-left: 5px;
+    padding-right: 6px;
+    /*font-size: x-large;*/
+    border-radius: 7px;
+}
+
+.spanLeg{
+    font-size: x-large;
+    top: 20%;
+    position: relative;
+    padding-right: 15px;
+}
+.spanLegDot::after{
+    padding-left: 15px;
+    content: "\00B7";
+}
+.spanMin{    
+    right: 4%;
+    position: absolute;
+    top: 28%;
+    text-align: right;
+    padding-right: 0px;
+}
+.pMin{    
+    font-size: 10px;
+    margin-top: -6px;
+}
+.divDepartureInformation{
+    font-size: 12px;
+    position: absolute;
+    bottom: 5%;
+    left: 3%;
+}
+.divWalkMin{    
+    font-size: 9px;
+    position: relative;
+    display: inline-block;
+    /*bottom: 0%;
+    left: 20%;*/
+}
+.tripDetailsContainer{
+    top: 5%;
+    background-color: white;
+    max-width: 450px;
+    height: auto;
+    padding: 9px;
+    border-radius: 6px;
+    box-shadow: 0 0 10px 2px rgba(0,0,0,.1);
+    z-index: 19;
+    position: relative;
+    width: 93%;
+    left: 50%;
+    transform: translateX(-50%);
+    min-width: 250px;
+    display: none;
+}
+.singleLegBox{    
+    height: 40px;
+    border-bottom-style: outset;
+    border-width: thin;
+    margin-top: 6px;
+    width: 100%;
+    position: relative;
+    left: 50%;
+    transform: translateX(-50%);
+    padding-left: 10px;
+    line-height: 40px;
+}
+.busDirectionDisplay{
+    border-style: solid;
+    background-color: black;
+    color: #ffe500;
+    border-color: black;
+    border-radius: 4px;
+}
+.transportLeftLine{
+    height: 54px;
+    display: inline-block;
+    line-height: 0px;
+    border-left-style: solid;
+    border-left-color: #006C93;
+    border-width: 4px;
+    border-radius: 4px;
+    margin-right: 5px;
+}
