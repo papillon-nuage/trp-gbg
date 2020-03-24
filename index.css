@@ -31,6 +31,7 @@ tr:hover{
     position: fixed;
     border-top-left-radius: 10px;
     border-top-right-radius: 10px;
+    box-shadow: 0 0 6px 4px rgba(0, 0, 0, 0.14);
 }
 .bottomGreenExtended{
     height:75%;

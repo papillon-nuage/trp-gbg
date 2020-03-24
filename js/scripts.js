@@ -307,9 +307,12 @@ document.getElementsByClassName('mapboxgl-ctrl-geocoder--input')[0].addEventList
 
 let userPosition;
 let numTrips;
-
+let saveResultChosen;
 geocoder.on('result', (resultChosen) =>{
+  saveResultChosen = resultChosen;
   console.log('Result'+resultChosen.result['center']);
+  console.log('Result'+JSON.stringify(resultChosen.result));
+  console.log('Result'+saveResultChosen.result['place_name']);
   const originLngLat = userPositionMarker.getLngLat();
   document.getElementById('possibleTripList').innerHTML='';
   document.getElementById('bottomGreen').classList.add('bottomGreenExtended');
@@ -378,6 +381,11 @@ geocoder.on('result', (resultChosen) =>{
 
 geocoder.on('clear', () =>{
   console.log('Input Cleared');
+  document.getElementById('possibleTripList').innerHTML='';
+  document.getElementById('bottomGreen').classList.remove('bottomGreenExtended');
+  document.getElementById('inputBox').classList.remove('inputBoxExtended');
+  map.flyTo({ center: [userPosition.longitude,userPosition.latitude-0.0015], zoom: 16 });
+
 });
     
 const getGeoRef = async(geoRefURL,requestOptions) => {
@@ -446,10 +454,13 @@ async function clickedResultTrip(ev, tripArray) {
     let arrayWithTripSource = new Array();
     let arrayWithLegColors = new Array();
     let htmlToAdd = '';
-    document.getElementById('tripDetailsBox').innerHTML=document.getElementById('trip'+ev.toElement.id.charAt(ev.toElement.id.length-1)).outerHTML += '<div style="height: 5px;"></div>';
+    document.getElementById('tripDetailsBox').innerHTML = document.getElementById('trip'+ev.toElement.id.charAt(ev.toElement.id.length-1)).outerHTML;
+    document.getElementById('tripDetailsBox').innerHTML += '<div style="height: 5px;"></div>';
     console.log('HEHO');
     tripArray[ev.toElement.id.charAt(ev.toElement.id.length-1)].Leg.forEach((currentLeg, currentIndex) => {
       //htmlToAdd += '<div class="singleLegBox" id="leg'+currentIndex+'">'; // <h2>Trip n*'+index+'</h2>'; class="singleLegBox"
+      const ifPossibleDestName = (currentLeg.Destination.name!=undefined&&currentLeg.Destination.name!='undefined') ? currentLeg.Destination.name : saveResultChosen.result['place_name'];
+      console.log('PLACE = '+ifPossibleDestName);
       const ifPossibleRtDateOrig = (currentLeg.Origin.rtDate!=undefined) ? currentLeg.Origin.rtDate : currentLeg.Origin.date;
       const ifPossibleRtDateDest = (currentLeg.Destination.rtDate!=undefined) ? currentLeg.Destination.rtDate : currentLeg.Destination.date;
       const ifPossibleRtTimeOrig = (currentLeg.Origin.rtTime!=undefined) ? currentLeg.Origin.rtTime : currentLeg.Origin.time;
@@ -460,8 +471,12 @@ async function clickedResultTrip(ev, tripArray) {
       htmlToAdd += '<span class="" style="position: absolute;right: 15px;line-height: 32px;text-align:right;font-size: larger;font-weight: bold;padding-top: 9px;">'+walkTimeDiff+'<p class="pMin" style="line-height:0px;font-weight:normal;">min</p></span>';
 
       if(currentLeg.type == "WALK") {
-        htmlToAdd += '<div class="singleLegBox" id="leg'+currentIndex+'">';
-        htmlToAdd += "Marcher jusqu'à "+currentLeg.Destination.name.replace(', Göteborg','');
+        if(ifPossibleDestName.length>30) {          
+          htmlToAdd += '<div class="singleLegBox" id="leg'+currentIndex+'" style="line-height:20px">';  
+        } else {
+          htmlToAdd += '<div class="singleLegBox" id="leg'+currentIndex+'">';
+        }        
+        htmlToAdd += "Marcher jusqu'à "+ifPossibleDestName.replace(', Göteborg','');
       } else {
         htmlToAdd += '<div class="singleLegBox" style="height: 120px;" id="leg'+currentIndex+'">';
         htmlToAdd += '<div class="busLeg" style="background-color: '+currentLeg.fgColor+';transform: scale(0.8);padding-bottom: 0px;padding-top: 2px;line-height: 30px;">'+currentLeg.sname+'</div>'; 
@@ -678,6 +693,10 @@ document.getElementById('precBox').addEventListener('click', (event) => {
   document.getElementById('possibleTripList').style.display= '';
   document.getElementById('precBox').style.display= 'none';
   document.getElementById('tripDetailsBox').style.display= 'none';
+  if (map.getLayer('lines')) map.removeLayer('lines');
+  if (map.getSource('lines')) map.removeSource('lines');
+  map.flyTo({ center: [saveResultChosen.result['center'][0],saveResultChosen.result['center'][1]], zoom: 15}); //-0.0043
+
 
 });
 
