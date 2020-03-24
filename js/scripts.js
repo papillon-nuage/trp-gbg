@@ -20,6 +20,8 @@ function calcDiffTimeInMinutes(dt2, dt1) {
 
 console.log('ok');
 
+var mapHasBeenResized = false;
+
 var currentToken;
 var departStopId;
 var departStopName;
@@ -309,6 +311,15 @@ let userPosition;
 let numTrips;
 let saveResultChosen;
 geocoder.on('result', (resultChosen) =>{
+  document.getElementsByClassName('mapboxgl-ctrl-geocoder--input')[0].disabled = true;
+  document.getElementsByClassName('mapboxgl-ctrl-geocoder--input')[0].style.color= '#37ab2e';
+  //document.getElementsByClassName('mapboxgl-ctrl-geocoder mapboxgl-ctrl')[0].innerHTML+='<i class="fas fa-map-marker-alt" id="searchInputMarker"></i>'; .id='searchInputMarker'
+  let iconToInsert = document.createElement("i");
+  iconToInsert.id = 'searchInputMarker';
+  iconToInsert.classList.add('fas');
+  iconToInsert.classList.add('fa-map-marker-alt');
+  document.getElementById('geocoder').firstChild.insertBefore(iconToInsert,document.getElementById('geocoder').firstChild.firstChild);
+  document.getElementsByClassName('mapboxgl-ctrl-geocoder--icon-search')[0].style.display = 'none';
   saveResultChosen = resultChosen;
   console.log('Result'+resultChosen.result['center']);
   console.log('Result'+JSON.stringify(resultChosen.result));
@@ -317,7 +328,11 @@ geocoder.on('result', (resultChosen) =>{
   document.getElementById('possibleTripList').innerHTML='';
   document.getElementById('bottomGreen').classList.add('bottomGreenExtended');
   document.getElementById('inputBox').classList.add('inputBoxExtended');
-  map.flyTo({ center: [resultChosen.result['center'][0],resultChosen.result['center'][1]-0.0043], zoom: 15}); //Gamla%20ceresgatan%207%2C%20G%C3%B6teborg
+  if(mapHasBeenResized) {
+    map.flyTo({ center: [resultChosen.result['center'][0],resultChosen.result['center'][1]], zoom: 15});
+  } else {
+    map.flyTo({ center: [resultChosen.result['center'][0],resultChosen.result['center'][1]-0.0043], zoom: 15}); //Gamla%20ceresgatan%207%2C%20G%C3%B6teborg
+  }
   const originName="userPos";
   fetch("https://api.vasttrafik.se/bin/rest.exe/v2/trip?originCoordLat="+originLngLat.lat+"&originCoordLong="+originLngLat.lng+"&originCoordName="+originName
   +"&destCoordLat="+resultChosen.result['center'][1]+"&destCoordLong="+resultChosen.result['center'][0]+"&destCoordName="+resultChosen.result['properties'].title+"&numTrips=7&needGeo=1&format=json", requestOptions)
@@ -354,8 +369,9 @@ geocoder.on('result', (resultChosen) =>{
         } else if(lg.type == "BUS") {
           htmlToAdd+='<div class="busLeg" style="background-color: '+lg.fgColor+'">'+lg.sname+'</div>';
         } else if(lg.type == "TRAM"){     
-          if(lg.fgcColor=="#FFFFFF") {
-            htmlToAdd+='<div class="busLeg" style="background-color: '+lg.fgColor+';border-stlye: solid; border-color: black; border-width: 2px; color: black;">T'+lg.sname+'</div>';
+          if(lg.fgcColor=="#FFFFFF" || lg.sname=="1") {
+            console.log('WHITE COLOR!!!');
+            htmlToAdd+='<div class="busLeg" style="background-color: '+lg.fgColor+';border-style: solid; border-color: black; border-width: 2px; color: black;">T'+lg.sname+'</div>';
           } else {    
             htmlToAdd+='<div class="busLeg" style="background-color: '+lg.fgColor+'">T'+lg.sname+'</div>';
           }
@@ -381,10 +397,18 @@ geocoder.on('result', (resultChosen) =>{
 
 geocoder.on('clear', () =>{
   console.log('Input Cleared');
+  document.getElementsByClassName('mapboxgl-ctrl-geocoder--input')[0].disabled = false;
+  document.getElementsByClassName('mapboxgl-ctrl-geocoder--input')[0].style.color= '';
+  document.getElementById('searchInputMarker').remove();
+  document.getElementsByClassName('mapboxgl-ctrl-geocoder--icon-search')[0].style.display = '';
   document.getElementById('possibleTripList').innerHTML='';
   document.getElementById('bottomGreen').classList.remove('bottomGreenExtended');
   document.getElementById('inputBox').classList.remove('inputBoxExtended');
-  map.flyTo({ center: [userPosition.longitude,userPosition.latitude-0.0015], zoom: 16 });
+  if(mapHasBeenResized){
+    map.flyTo({ center: [userPosition.longitude,userPosition.latitude], zoom: 16 });
+  } else {
+    map.flyTo({ center: [userPosition.longitude,userPosition.latitude-0.0013], zoom: 16 });
+  }
 
 });
     
@@ -479,7 +503,16 @@ async function clickedResultTrip(ev, tripArray) {
         htmlToAdd += "Marcher jusqu'à "+ifPossibleDestName.replace(', Göteborg','');
       } else {
         htmlToAdd += '<div class="singleLegBox" style="height: 120px;" id="leg'+currentIndex+'">';
-        htmlToAdd += '<div class="busLeg" style="background-color: '+currentLeg.fgColor+';transform: scale(0.8);padding-bottom: 0px;padding-top: 2px;line-height: 30px;">'+currentLeg.sname+'</div>'; 
+        if(currentLeg.type=="TRAM") {
+          if(currentLeg.sname=="1") {
+            htmlToAdd += '<div class="busLeg" style="background-color: '+currentLeg.fgColor+';border-style: solid;border-color: black;border-width: 2px;color: black;
+            +'transform: scale(0.8);padding-bottom: 0px;padding-top: 2px;line-height: 30px;">T'+currentLeg.sname+'</div>';
+          } else {          
+            htmlToAdd += '<div class="busLeg" style="background-color: '+currentLeg.fgColor+';transform: scale(0.8);padding-bottom: 0px;padding-top: 2px;line-height: 30px;">T'+currentLeg.sname+'</div>'; 
+          }
+        } else {
+          htmlToAdd += '<div class="busLeg" style="background-color: '+currentLeg.fgColor+';transform: scale(0.8);padding-bottom: 0px;padding-top: 2px;line-height: 30px;">'+currentLeg.sname+'</div>'; 
+        }
         htmlToAdd += 'direction <span class="busDirectionDisplay">'+currentLeg.direction+'</span>'; 
         htmlToAdd += '<div><div class="transportLeftLine" style="border-color:'+currentLeg.fgColor+'"></div>';
         htmlToAdd += '<div style="display:inline-block">'+ifPossibleRtTimeOrig+' '+currentLeg.Origin.name.replace(', Göteborg','')+' '+currentLeg.Origin.track+'<br />'
@@ -534,6 +567,7 @@ async function clickedResultTrip(ev, tripArray) {
     document.getElementById('map').style.height= '56%';   
 
     map.resize();
+    mapHasBeenResized = true;
     // document.getElementById('bottomGreen').classList.add('bottomGreenExtended');
     // document.getElementById('inputBox').classList.add('inputBoxExtended');
     drawTripUsingSource(arrayWithTripSource);

@@ -21,6 +21,7 @@ tr:hover{
     right: unset;
     border-radius: 10px;
     display: none;
+    cursor: pointer;
 }
 .bottomGreenNormal{
     background-color:rgb(55, 171, 46);
@@ -76,6 +77,14 @@ tr:hover{
     height: 30px;
     margin-top: 3px; 
     top: 8px;       
+}
+#searchInputMarker{
+    font-size: 29px;
+    position: absolute;
+    left: 15px;
+    top: 11px;
+    color: orange;
+    text-shadow: 2px 1px 2px #0000008a;
 }
 div.mapboxgl-ctrl-geocoder.mapboxgl-ctrl input[type="text"].mapboxgl-ctrl-geocoder--input{
     height: 50px;
