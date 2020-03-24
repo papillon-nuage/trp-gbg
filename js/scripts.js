@@ -505,7 +505,7 @@ async function clickedResultTrip(ev, tripArray) {
         htmlToAdd += '<div class="singleLegBox" style="height: 120px;" id="leg'+currentIndex+'">';
         if(currentLeg.type=="TRAM") {
           if(currentLeg.sname=="1") {
-            htmlToAdd += '<div class="busLeg" style="background-color: '+currentLeg.fgColor+';border-style: solid;border-color: black;border-width: 2px;color: black;
+            htmlToAdd += '<div class="busLeg" style="background-color: '+currentLeg.fgColor+';border-style: solid;border-color: black;border-width: 2px;color: black;'
             +'transform: scale(0.8);padding-bottom: 0px;padding-top: 2px;line-height: 30px;">T'+currentLeg.sname+'</div>';
           } else {          
             htmlToAdd += '<div class="busLeg" style="background-color: '+currentLeg.fgColor+';transform: scale(0.8);padding-bottom: 0px;padding-top: 2px;line-height: 30px;">T'+currentLeg.sname+'</div>'; 
