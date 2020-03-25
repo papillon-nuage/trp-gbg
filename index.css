@@ -27,7 +27,7 @@ tr:hover{
     background-color:rgb(55, 171, 46);
     z-index: 9;
     width: 100%;
-    height: 40%;
+    height: 30%;
     bottom: 0;
     position: fixed;
     border-top-left-radius: 10px;
@@ -39,8 +39,8 @@ tr:hover{
     height: 73%;
     transition: height 1.5s ease;
     overflow-y: auto;
-    top: 27%;
-    bottom: unset;
+    /*top: 27%;*/
+    bottom: 0;
 }
 .inputBoxNormal{
     background-color: white;
@@ -50,7 +50,8 @@ tr:hover{
     height: 50px;
     display: inline-block;
     border-radius: 6px;
-    top: 57%;
+    /*top: 57%;*/
+    bottom: 30%;
     position: absolute;
     z-index: 11;
     left: 50%;
@@ -62,7 +63,7 @@ tr:hover{
     /*top: 19.8%;*/
     top: unset;
     bottom: 73%;
-    transition: top 1.5s ease;
+    transition: bottom 1.5s ease;
 }
 #geocoder{
     position: absolute;
@@ -164,6 +165,23 @@ svg.mapboxgl-ctrl-geocoder--icon-close{
     padding-left: 15px;
     content: "\00B7";
 }
+@media (max-width: 550px) { 
+    .busLeg{
+        padding-top: 3px;
+        padding-right: 2px;
+        padding-left: 2px;
+        border-radius: 4px;
+    }
+}
+@media (max-width: 550px) {
+    .spanLeg{
+        font-size: medium;
+        padding-right: 7px;
+    } 
+    .spanLegDot::after{
+        padding-left: 7px;
+    }
+} 
 .spanMin{    
     right: 4%;
     position: absolute;
@@ -174,6 +192,11 @@ svg.mapboxgl-ctrl-geocoder--icon-close{
 .pMin{    
     font-size: 10px;
     margin-top: -6px;
+}
+@media (max-width: 550px) {  
+    .pMin{    
+        line-height: 15px;
+    }
 }
 .divDepartureInformation{
     font-size: 12px;

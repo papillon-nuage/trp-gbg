@@ -325,7 +325,9 @@ geocoder.on('result', (resultChosen) =>{
   iconToInsert.id = 'searchInputMarker';
   iconToInsert.classList.add('fas');
   iconToInsert.classList.add('fa-map-marker-alt');
-  document.getElementById('geocoder').firstChild.insertBefore(iconToInsert,document.getElementById('geocoder').firstChild.firstChild);
+  if(document.getElementById('searchInputMarker')==undefined) {
+    document.getElementById('geocoder').firstChild.insertBefore(iconToInsert,document.getElementById('geocoder').firstChild.firstChild);
+  }
   document.getElementsByClassName('mapboxgl-ctrl-geocoder--icon-search')[0].style.display = 'none';
   saveResultChosen = resultChosen;
   console.log('Result'+resultChosen.result['center']);
@@ -356,6 +358,11 @@ geocoder.on('result', (resultChosen) =>{
       console.log(jServerDate);
       let tripTimeFromNow;
       trp.Leg.forEach((lg,ind) => {
+        
+        const dateOrig = new Date(lg.Origin.date+'T'+lg.Origin.time);
+        const dateDest = new Date(lg.Destination.date+'T'+lg.Destination.time);
+        const walkTimeDiff = calcDiffTimeInMinutes(dateDest,dateOrig);
+
         if(ind==trp.Leg.length-1) {
           htmlToAdd+='<span class="spanLeg">';
           let jFinalLegDestinationDate = new Date(lg.Destination.date+'T'+lg.Destination.time);
@@ -363,16 +370,20 @@ geocoder.on('result', (resultChosen) =>{
           diff /= 60;
           tripTimeFromNow = Math.abs(Math.round(diff));
           //tripTimeFromNow = lg.Destination.time+' now '+result.TripList.servertime;
+        } else if(walkTimeDiff == 0) {
+          htmlToAdd+='<span>'
         } else {
           htmlToAdd+='<span class="spanLeg spanLegDot">';
         }
         if(lg.type == "WALK") {
-          htmlToAdd+='<i class="fas fa-walking"></i>';
-          const dateOrig = new Date(lg.Origin.date+'T'+lg.Origin.time);
+          /*const dateOrig = new Date(lg.Origin.date+'T'+lg.Origin.time);
           const dateDest = new Date(lg.Destination.date+'T'+lg.Destination.time);
-          const walkTimeDiff = calcDiffTimeInMinutes(dateDest,dateOrig);
-          console.log('time diff walk: ',walkTimeDiff);
-          htmlToAdd+='<div class="divWalkMin">~'+walkTimeDiff+'m</div>';
+          const walkTimeDiff = calcDiffTimeInMinutes(dateDest,dateOrig);*/
+          if(walkTimeDiff != 0) {
+            htmlToAdd+='<i class="fas fa-walking"></i>';
+            console.log('time diff walk: ',walkTimeDiff);
+            htmlToAdd+='<div class="divWalkMin">~'+walkTimeDiff+'m</div>';
+          }
         } else if(lg.type == "BUS") {
           htmlToAdd+='<div class="busLeg" style="background-color: '+lg.fgColor+'">'+lg.sname+'</div>';
         } else if(lg.type == "TRAM"){     
@@ -500,7 +511,7 @@ async function clickedResultTrip(ev, tripArray) {
       const dateOrig = new Date(ifPossibleRtDateOrig+'T'+ifPossibleRtTimeOrig);
       const dateDest = new Date(ifPossibleRtDateDest+'T'+ifPossibleRtTimeDest);
       const walkTimeDiff = calcDiffTimeInMinutes(dateDest,dateOrig);
-      htmlToAdd += '<span class="" style="position: absolute;right: 15px;line-height: 32px;text-align:right;font-size: larger;font-weight: bold;padding-top: 9px;">'+walkTimeDiff+'<p class="pMin" style="line-height:0px;font-weight:normal;">min</p></span>';
+      htmlToAdd += '<span class="" style="position: absolute;right: 15px;line-height: 32px;text-align:right;font-size: larger;font-weight: bold;padding-top: 9px;">'+walkTimeDiff+'<p class="pMin" style="line-height:3px;font-weight:normal;">min</p></span>';
 
       if(currentLeg.type == "WALK") {
         if(ifPossibleDestName.length>30) {          
@@ -564,7 +575,7 @@ async function clickedResultTrip(ev, tripArray) {
       });      
     });
     //move
-    document.getElementById('bottomGreen').style.height = '47%';    
+    document.getElementById('bottomGreen').style.height = '49%';    
     // document.getElementById('inputBox').style.top= '49.8%';    
     document.getElementById('inputBox').style.display= 'none';  
     //document.getElementById('possibleTripList').style.top= '5%';
@@ -731,7 +742,7 @@ minZoom: 8
 
 document.getElementById('precBox').addEventListener('click', (event) => {    
   document.getElementById('inputBox').style.display= '';  
-  document.getElementById('inputBox').style.top= '47.9%';
+  document.getElementById('inputBox').style.bottom= '49%';
   document.getElementById('possibleTripList').style.display= '';
   document.getElementById('precBox').style.display= 'none';
   document.getElementById('tripDetailsBox').style.display= 'none';
