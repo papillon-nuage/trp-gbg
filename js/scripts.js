@@ -307,13 +307,19 @@ document.getElementsByClassName('mapboxgl-ctrl-geocoder--input')[0].addEventList
   }
 });
 
+document.getElementById('inputBox').addEventListener("click", function( event ) {
+  document.getElementsByClassName('mapboxgl-ctrl-geocoder--button')[0].display = 'block';
+});
+
 let userPosition;
 let numTrips;
 let saveResultChosen;
 geocoder.on('result', (resultChosen) =>{
   document.getElementsByClassName('mapboxgl-ctrl-geocoder--input')[0].disabled = true;
-  document.getElementsByClassName('mapboxgl-ctrl-geocoder--input')[0].style.color= '#37ab2e';
+  document.getElementsByClassName('mapboxgl-ctrl-geocoder--input')[0].active = false;
+  document.getElementsByClassName('mapboxgl-ctrl-geocoder--input')[0].style.color= 'rgb(55, 171, 46)';
   //document.getElementsByClassName('mapboxgl-ctrl-geocoder mapboxgl-ctrl')[0].innerHTML+='<i class="fas fa-map-marker-alt" id="searchInputMarker"></i>'; .id='searchInputMarker'
+  document.getElementsByClassName('mapboxgl-ctrl-geocoder--button')[0].display = 'block';
   let iconToInsert = document.createElement("i");
   iconToInsert.id = 'searchInputMarker';
   iconToInsert.classList.add('fas');
@@ -399,6 +405,7 @@ geocoder.on('clear', () =>{
   console.log('Input Cleared');
   document.getElementsByClassName('mapboxgl-ctrl-geocoder--input')[0].disabled = false;
   document.getElementsByClassName('mapboxgl-ctrl-geocoder--input')[0].style.color= '';
+  document.getElementsByClassName('mapboxgl-ctrl-geocoder--button')[0].display = '';
   document.getElementById('searchInputMarker').remove();
   document.getElementsByClassName('mapboxgl-ctrl-geocoder--icon-search')[0].style.display = '';
   document.getElementById('possibleTripList').innerHTML='';
