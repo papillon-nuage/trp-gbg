@@ -35,9 +35,12 @@ tr:hover{
     box-shadow: 0 0 6px 4px rgba(0, 0, 0, 0.14);
 }
 .bottomGreenExtended{
-    height:75%;
+    /*height:75%;*/
+    height: 73%;
     transition: height 1.5s ease;
     overflow-y: auto;
+    top: 27%;
+    bottom: unset;
 }
 .inputBoxNormal{
     background-color: white;
@@ -56,7 +59,9 @@ tr:hover{
     box-shadow: 0 0 10px 2px rgba(0,0,0,.1);
 }
 .inputBoxExtended{
-    top: 19.8%;
+    /*top: 19.8%;*/
+    top: unset;
+    bottom: 73%;
     transition: top 1.5s ease;
 }
 #geocoder{
@@ -91,6 +96,11 @@ div.mapboxgl-ctrl-geocoder.mapboxgl-ctrl input[type="text"].mapboxgl-ctrl-geocod
     margin-left: 40px;
     font-size: larger;
 }
+@media (max-width: 411px) { 
+    div.mapboxgl-ctrl-geocoder.mapboxgl-ctrl input[type="text"].mapboxgl-ctrl-geocoder--input{
+        font-size: small;
+    }
+}   
 div.mapboxgl-ctrl-geocoder--pin-right button.mapboxgl-ctrl-geocoder--button{
     margin-right: -27px;
     right: 0px;
