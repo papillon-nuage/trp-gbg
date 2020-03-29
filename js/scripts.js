@@ -1,3 +1,9 @@
+let mapPlaceholderWidth = (screen.width<=1280) ? screen.width : 1280;
+let mapPlaceholderHeight = (screen.height<=1280) ? screen.height : 1280;
+document.getElementById('mapPlaceholder').style.backgroundImage= "url('https://api.mapbox.com/styles/v1/mapbox/streets-v11/static/11.9681,57.6971,12/"+mapPlaceholderWidth+"x"+mapPlaceholderHeight+"?access_token=pk.eyJ1IjoiZGFuc3dpY2siLCJhIjoiY2l1dTUzcmgxMDJ0djJ0b2VhY2sxNXBiMyJ9.25Qs4HNEkHubd4_Awbd8Og')";
+
+//11.9680538, 57.6970956]
+
 function startTime() {
   var today = new Date();
   var h = today.getHours();
@@ -248,7 +254,11 @@ maxBounds: [[11.135498, 57.3223778], [12.9494377, 58.2625957]],
 minZoom: 8
 });
 
-
+map.on('load', function(e) {
+  var mapContainerEl = document.getElementById('map');
+  mapContainerEl.style.visibility = 'visible';
+  document.getElementById('mapPlaceholder').remove();
+});
  
 var geocoder = new MapboxGeocoder({
   accessToken: mapboxgl.accessToken,
@@ -370,7 +380,7 @@ geocoder.on('result', (resultChosen) =>{
           diff /= 60;
           tripTimeFromNow = Math.abs(Math.round(diff));
           //tripTimeFromNow = lg.Destination.time+' now '+result.TripList.servertime;
-        } else if(walkTimeDiff == 0) {
+        } else if(walkTimeDiff == 0 && lg.type== "WALK") {
           htmlToAdd+='<span>'
         } else {
           htmlToAdd+='<span class="spanLeg spanLegDot">';
@@ -490,17 +500,17 @@ function drawTripUsingSource(arrayWithAllTripSource) {
 async function clickedResultTrip(ev, tripArray) {
   console.log(ev);
   console.log(ev.target);
-  if(ev.toElement.className == "singleTripBox") {
-    console.log(ev.toElement.id.charAt(ev.toElement.id.length-1));
-    console.log(tripArray[ev.toElement.id.charAt(ev.toElement.id.length-1)]);
+  if(ev.target.className == "singleTripBox") { //toElement
+    console.log(ev.target.id.charAt(ev.target.id.length-1)); //toElement
+    console.log(tripArray[ev.target.id.charAt(ev.target.id.length-1)]); //toElement
     let promiseArray = new Array();
     let arrayWithTripSource = new Array();
     let arrayWithLegColors = new Array();
     let htmlToAdd = '';
-    document.getElementById('tripDetailsBox').innerHTML = document.getElementById('trip'+ev.toElement.id.charAt(ev.toElement.id.length-1)).outerHTML;
+    document.getElementById('tripDetailsBox').innerHTML = document.getElementById('trip'+ev.target.id.charAt(ev.target.id.length-1)).outerHTML; //toElement
     document.getElementById('tripDetailsBox').innerHTML += '<div style="height: 5px;"></div>';
     console.log('HEHO');
-    tripArray[ev.toElement.id.charAt(ev.toElement.id.length-1)].Leg.forEach((currentLeg, currentIndex) => {
+    tripArray[ev.target.id.charAt(ev.target.id.length-1)].Leg.forEach((currentLeg, currentIndex) => { //toElement
       //htmlToAdd += '<div class="singleLegBox" id="leg'+currentIndex+'">'; // <h2>Trip n*'+index+'</h2>'; class="singleLegBox"
       const ifPossibleDestName = (currentLeg.Destination.name!=undefined&&currentLeg.Destination.name!='undefined') ? currentLeg.Destination.name : saveResultChosen.result['place_name'];
       console.log('PLACE = '+ifPossibleDestName);
@@ -596,13 +606,13 @@ async function clickedResultTrip(ev, tripArray) {
     greenBoxElement.addEventListener('wheel', (event) => zoom(event, greenBoxElement));
     document.getElementById('tripDetailsBox').addEventListener('click', (clickEvent) => {
       console.log('this is clicked '+clickEvent);
-      if(clickEvent.toElement.className == "singleLegBox") {
-        console.log(clickEvent.toElement.id.charAt(clickEvent.toElement.id.length-1));
-        console.log('color with trip source clicked = '+arrayWithTripSource[clickEvent.toElement.id.charAt(clickEvent.toElement.id.length-1)].properties.color);
-        const pp = arrayWithTripSource[clickEvent.toElement.id.charAt(clickEvent.toElement.id.length-1)];
+      if(clickEvent.target.className == "singleLegBox") { //toElement
+        console.log(clickEvent.target.id.charAt(clickEvent.target.id.length-1)); //toElement
+        console.log('color with trip source clicked = '+arrayWithTripSource[clickEvent.toElement.id.charAt(clickEvent.target.id.length-1)].properties.color); //toElement
+        const pp = arrayWithTripSource[clickEvent.target.id.charAt(clickEvent.target.id.length-1)]; //toElement
         fitToTripLine([pp]);
       }
-      if(clickEvent.toElement.className == "singleTripBox") {
+      if(clickEvent.target.className == "singleTripBox") { //toElement
         fitToTripLine(arrayWithTripSource);
       }
     });
@@ -622,7 +632,7 @@ function zoom(event,el) {
   //scale = Math.min(Math.max(.125, scale), 4);
 
   // Apply scale transform
-  el.style.height = 47+scale*4+`%`;
+  el.style.height = 49+scale*4+`%`;
   //el.style.transform = `scale(${scale})`;
 }
 
@@ -703,8 +713,14 @@ var userPositionMarker = new mapboxgl.Marker({
 });
 navigator.geolocation.getCurrentPosition(posi => {console.log(posi);centerMapOnUser(posi.coords)});
 function centerMapOnUser (position) {
+  let heightOffset = 0.0010;
+  if(window.matchMedia("(max-height: 700px)").matches){
+    heightOffset = 0.0005;
+  } else {
+    heightOffset = 0.0010;
+  }
   userPosition = position;
-  map.flyTo({ center: [position.longitude,position.latitude-0.0015], zoom: 16 });
+  map.flyTo({ center: [position.longitude,position.latitude-heightOffset], zoom: 16 });
   userPositionMarker.setLngLat([position.longitude, position.latitude]);
   userPositionMarker.addTo(map);
 }
