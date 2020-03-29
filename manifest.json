@@ -1,6 +1,4 @@
 {
-  "lang": "en",
-  "dir": "ltr",
   "name": "GötTrip",
   "description": "Simplify and enhance Göteborg public transport experience!",
   "short_name": "GötTrip",
@@ -14,11 +12,9 @@
     "sizes": "512x512",
     "type": "image/png"
   }],
-  "scope": "",
   "start_url": "index.html",
   "display": "standalone",
   "orientation": "portrait",
-  "theme_color": "rgb(55, 171, 46)",
-  "background_color": "rgb(55, 171, 46)"
-  
+  "theme_color": "#339900",
+  "background_color": "#339900"  
 }
