@@ -272,19 +272,22 @@ svg.mapboxgl-ctrl-geocoder--icon-close{
 
 .topActionButtons{
     position: relative;
-    width: 30px;
-    height: 30px;
+    width: 35px;
+    height: 35px;
     text-align: center;
-    padding-left: 3px;
+    /*padding-left: 3px;
     padding-bottom: 5px;
     padding-top: 0px;
     padding-right: 5px;
-    display: inline-block;
+    display: inline-block;*/
+    display: none;
     top: 15px;
     border-radius: 15px;
     font-size: x-large;
     box-shadow: 0 0 10px 2px rgba(0, 0, 0, 0.22);
     background-color: white;
     z-index: 50;
-    border-radius: 5px;
+    border-radius: 10px;
+    line-height: 35px;
+    cursor: pointer;
 }

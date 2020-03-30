@@ -324,13 +324,17 @@ document.getElementById('inputBox').addEventListener("click", function( event ) 
 let userPosition;
 let numTrips;
 let saveResultChosen;
-geocoder.on('result', (resultChosen) =>{
+let tripResults;
+geocoder.on('result', (inputResult) => {
   document.getElementsByClassName('mapboxgl-ctrl-geocoder--input')[0].disabled = true;
   document.getElementsByClassName('mapboxgl-ctrl-geocoder--input')[0].active = false;
   document.getElementsByClassName('mapboxgl-ctrl-geocoder--input')[0].blur();
   document.getElementsByClassName('mapboxgl-ctrl-geocoder--input')[0].style.color= 'black'; //rgb(55, 171, 46)
   //document.getElementsByClassName('mapboxgl-ctrl-geocoder mapboxgl-ctrl')[0].innerHTML+='<i class="fas fa-map-marker-alt" id="searchInputMarker"></i>'; .id='searchInputMarker'
   document.getElementsByClassName('mapboxgl-ctrl-geocoder--button')[0].display = 'block';
+  document.getElementById('buttonSettings').style.display= 'inline-block';
+  document.getElementById('buttonRefresh').style.display= 'inline-block';
+  document.getElementById('buttonSetTime').style.display= 'inline-block';
   let iconToInsert = document.createElement("i");
   iconToInsert.id = 'searchInputMarker';
   iconToInsert.classList.add('fas');
@@ -338,26 +342,49 @@ geocoder.on('result', (resultChosen) =>{
   if(document.getElementById('searchInputMarker')==undefined) {
     document.getElementById('geocoder').firstChild.insertBefore(iconToInsert,document.getElementById('geocoder').firstChild.firstChild);
   }
+  document.getElementById('searchEmoji').style.display = 'none';
   document.getElementsByClassName('mapboxgl-ctrl-geocoder--icon-search')[0].style.display = 'none';
-  saveResultChosen = resultChosen;
+  saveResultChosen = inputResult;
+  document.getElementById('bottomGreen').classList.add('bottomGreenExtended');
+  document.getElementById('inputBox').classList.add('inputBoxExtended');
+  if(mapHasBeenResized) {
+    map.flyTo({ center: [inputResult.result['center'][0],inputResult.result['center'][1]], zoom: 15});
+  } else {
+    map.flyTo({ center: [inputResult.result['center'][0],inputResult.result['center'][1]-0.0043], zoom: 15}); //Gamla%20ceresgatan%207%2C%20G%C3%B6teborg
+  }
+  //document.getElementById('possibleTripList').addEventListener('click', (event) => clickedResultTrip(event, result.TripList.Trip));
+  getWalkOnlyTripList(inputResult);
+  getPossibleTripList(inputResult, true);
+  
+
+});
+
+function getWalkOnlyTripList(resultChosenWalkOnly) {  
+  const originLngLat = userPositionMarker.getLngLat();
+  console.log('google maps url');
+  window.location = 'geo:40.765819,-73.975866';
+  fetch("https://api.vasttrafik.se/bin/rest.exe/v2/trip?originCoordLat="+originLngLat.lat+"&originCoordLong="+originLngLat.lng+"&originCoordName="+"userPos"
+  +"&destCoordLat="+resultChosenWalkOnly.result['center'][1]+"&destCoordLong="+resultChosenWalkOnly.result['center'][0]+"&destCoordName="+resultChosenWalkOnly.result['properties'].title+"&numTrips=7&needGeo=1&onlyWalk=1&format=json", requestOptions)
+  .then(response => response.json())
+  .then(result => {
+    console.log('WALK ONLY TRIPS'+JSON.stringify(result.TripList));
+  });
+}
+
+// geocoder.on('result', (resultChosen) =>{
+function getPossibleTripList(resultChosen, newInputEntered){
   console.log('Result'+resultChosen.result['center']);
   console.log('Result'+JSON.stringify(resultChosen.result));
   console.log('Result'+saveResultChosen.result['place_name']);
   const originLngLat = userPositionMarker.getLngLat();
   document.getElementById('possibleTripList').innerHTML='';
-  document.getElementById('bottomGreen').classList.add('bottomGreenExtended');
-  document.getElementById('inputBox').classList.add('inputBoxExtended');
-  if(mapHasBeenResized) {
-    map.flyTo({ center: [resultChosen.result['center'][0],resultChosen.result['center'][1]], zoom: 15});
-  } else {
-    map.flyTo({ center: [resultChosen.result['center'][0],resultChosen.result['center'][1]-0.0043], zoom: 15}); //Gamla%20ceresgatan%207%2C%20G%C3%B6teborg
-  }
   const originName="userPos";
   fetch("https://api.vasttrafik.se/bin/rest.exe/v2/trip?originCoordLat="+originLngLat.lat+"&originCoordLong="+originLngLat.lng+"&originCoordName="+originName
   +"&destCoordLat="+resultChosen.result['center'][1]+"&destCoordLong="+resultChosen.result['center'][0]+"&destCoordName="+resultChosen.result['properties'].title+"&numTrips=7&needGeo=1&format=json", requestOptions)
   .then(response => response.json())
   .then(result => {
     console.log(result.TripList);
+    tripResults = result.TripList.Trip;
     result.TripList.Trip.forEach((trp,index) => {
       let htmlToAdd = '<div class="singleTripBox" id="trip'+index+'">'; // <h2>Trip n*'+index+'</h2>';
       let lastLeg;
@@ -416,12 +443,16 @@ geocoder.on('result', (resultChosen) =>{
       htmlToAdd+='<div class="divDepartureInformation">départ à '+firstPTDepartureTime+' de '+firstLegNonWalk.Origin.name.replace(', Göteborg','')+' '+firstLegNonWalk.Origin.track+'</div>'
       document.getElementById('possibleTripList').innerHTML+=htmlToAdd+'</div>';
     });
-    
-  document.getElementById('possibleTripList').addEventListener('click', (event) => clickedResultTrip(event, result.TripList.Trip));
+  //if(newInputEntered) {
+    //if()
+    //document.getElementById('possibleTripList').addEventListener('click', (event) => clickedResultTrip(event, result.TripList.Trip));
+    document.getElementById('possibleTripList').removeEventListener('click', clickedResultTrip);
+    document.getElementById('possibleTripList').addEventListener('click', clickedResultTrip);
+  //}
   });
 
-});
-
+}
+//function possibleTripListClicked(event)
 
 geocoder.on('clear', () =>{
   console.log('Input Cleared');
@@ -430,9 +461,13 @@ geocoder.on('clear', () =>{
   document.getElementsByClassName('mapboxgl-ctrl-geocoder--button')[0].display = '';
   document.getElementById('searchInputMarker').remove();
   document.getElementsByClassName('mapboxgl-ctrl-geocoder--icon-search')[0].style.display = '';
+  document.getElementById('searchEmoji').style.display = '';
   document.getElementById('possibleTripList').innerHTML='';
   document.getElementById('bottomGreen').classList.remove('bottomGreenExtended');
   document.getElementById('inputBox').classList.remove('inputBoxExtended');
+  document.getElementById('buttonSettings').style.display= 'none';
+  document.getElementById('buttonRefresh').style.display= 'none';
+  document.getElementById('buttonSetTime').style.display= 'none';
   if(mapHasBeenResized){
     map.flyTo({ center: [userPosition.longitude,userPosition.latitude], zoom: 16 });
   } else {
@@ -497,9 +532,11 @@ function drawTripUsingSource(arrayWithAllTripSource) {
 
 
 
-async function clickedResultTrip(ev, tripArray) {
+// async function clickedResultTrip(ev, tripArray) {
+async function clickedResultTrip(ev) {
   console.log(ev);
   console.log(ev.target);
+  let tripArray = tripResults;
   if(ev.target.className == "singleTripBox") { //toElement
     console.log(ev.target.id.charAt(ev.target.id.length-1)); //toElement
     console.log(tripArray[ev.target.id.charAt(ev.target.id.length-1)]); //toElement
@@ -603,7 +640,7 @@ async function clickedResultTrip(ev, tripArray) {
     fitToTripLine(arrayWithTripSource);
     const greenBoxElement = document.getElementById('bottomGreen');
     //greenBoxElement.onwheel = zoom;
-    greenBoxElement.addEventListener('wheel', (event) => zoom(event, greenBoxElement));
+    //greenBoxElement.addEventListener('wheel', (event) => zoom(event, greenBoxElement)); //ADDEVENTLISTENER SCROLL GREENBOX
     document.getElementById('tripDetailsBox').addEventListener('click', (clickEvent) => {
       console.log('this is clicked '+clickEvent);
       if(clickEvent.target.className == "singleLegBox") { //toElement
@@ -768,6 +805,13 @@ document.getElementById('precBox').addEventListener('click', (event) => {
 
 
 });
+
+document.getElementById('buttonRefresh').addEventListener('click', (event) => getPossibleTripList(saveResultChosen, false));
+
+
+
+
+
 
 
 
