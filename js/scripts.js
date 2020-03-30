@@ -380,7 +380,7 @@ function getWalkOnlyTripList(resultChosenWalkOnly) {
   });*/
 }
 function walkButtonClicked(){
-  console.log('TOUCHER');
+  console.log('TOUCHER' + walkString);
   window.location=walkString;
 }
 // geocoder.on('result', (resultChosen) =>{
@@ -469,7 +469,7 @@ function getPossibleTripList(resultChosen, newInputEntered){
     document.getElementById('possibleTripList').removeEventListener('click', clickedResultTrip);
     document.getElementById('possibleTripList').addEventListener('click', clickedResultTrip);
     document.getElementById('bigWalkButton').addEventListener('click', walkButtonClicked);
-    // document.getElementById('bigWalkButton').addEventListener('touchstart', walkButtonClicked);
+    document.getElementById('bigWalkButton').addEventListener('touchstart', walkButtonClicked);
   //}
   });
 
