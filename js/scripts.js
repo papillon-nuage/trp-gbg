@@ -380,6 +380,7 @@ function getWalkOnlyTripList(resultChosenWalkOnly) {
   });*/
 }
 function walkButtonClicked(){
+  console.log('TOUCHER');
   window.location=walkString;
 }
 // geocoder.on('result', (resultChosen) =>{
@@ -397,8 +398,6 @@ function getPossibleTripList(resultChosen, newInputEntered){
     //+'comgooglemaps://?saddr='+originLngLat.lat+','+originLngLat.lng+'&daddr='+resultChosen.result['center'][1]+','+resultChosen.result['center'][0]+'&directionsmode=walking'
     +'>On y va à pied !</a></span></div>'; //"
     document.getElementById('possibleTripList').innerHTML+=walkHTML;
-    document.getElementById('bigWalkButton').addEventListener("click", walkButtonClicked);
-    document.getElementById('bigWalkButton').addEventListener("touchstart", walkButtonClicked);
   }
   fetch("https://api.vasttrafik.se/bin/rest.exe/v2/trip?originCoordLat="+originLngLat.lat+"&originCoordLong="+originLngLat.lng+"&originCoordName="+originName
   +"&destCoordLat="+resultChosen.result['center'][1]+"&destCoordLong="+resultChosen.result['center'][0]+"&destCoordName="+resultChosen.result['properties'].title+"&numTrips=7&needGeo=1&format=json", requestOptions)
@@ -469,6 +468,8 @@ function getPossibleTripList(resultChosen, newInputEntered){
     //document.getElementById('possibleTripList').addEventListener('click', (event) => clickedResultTrip(event, result.TripList.Trip));
     document.getElementById('possibleTripList').removeEventListener('click', clickedResultTrip);
     document.getElementById('possibleTripList').addEventListener('click', clickedResultTrip);
+    document.getElementById('bigWalkButton').addEventListener('click', walkButtonClicked);
+    // document.getElementById('bigWalkButton').addEventListener('touchstart', walkButtonClicked);
   //}
   });
 
