@@ -393,9 +393,9 @@ function getPossibleTripList(resultChosen, newInputEntered){
   let walkHTML='';
   if(screen.width<=730) {
     walkHTML = '<div style="height: 40px;text-align: center;width: 30%;min-width: 150px;" class="singleTripBox" id="Walk999'+'">'
-    +'<span class="spanLeg" style="line-height: 40px; top: 0%; text-align: center;"><a id="bigWalkButton" style="color:black;text-decoration:none;" target="_blank" href="'
-    +'comgooglemaps://?saddr='+originLngLat.lat+','+originLngLat.lng+'&daddr='+resultChosen.result['center'][1]+','+resultChosen.result['center'][0]+'&directionsmode=walking'
-    +'">On y va à pied !</a></span></div>';
+    +'<span class="spanLeg" style="line-height: 40px; top: 0%; text-align: center;"><a id="bigWalkButton" style="color:black;text-decoration:none;"' // target="_blank" href="
+    //+'comgooglemaps://?saddr='+originLngLat.lat+','+originLngLat.lng+'&daddr='+resultChosen.result['center'][1]+','+resultChosen.result['center'][0]+'&directionsmode=walking'
+    +'>On y va à pied !</a></span></div>'; //"
     document.getElementById('possibleTripList').innerHTML+=walkHTML;
     document.getElementById('bigWalkButton').addEventListener("click", walkButtonClicked);
   }
