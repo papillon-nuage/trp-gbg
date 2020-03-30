@@ -363,8 +363,11 @@ function getWalkOnlyTripList(resultChosenWalkOnly) {
   const originLngLat = userPositionMarker.getLngLat();
   //console.log('google maps url');
   //window.location = 'geo:40.765819,-73.975866';
+  console.log('comgooglemaps://?saddr='+originLngLat.lat+','+originLngLat.lng+'&daddr='+resultChosenWalkOnly.result['center'][1]+','+resultChosenWalkOnly.result['center'][0]+'&directionsmode=walking');
   console.log("maps://?ll="+resultChosenWalkOnly.result['center'][1]+","+resultChosenWalkOnly.result['center'][0]);
-  window.location = "maps://?ll="+resultChosenWalkOnly.result['center'][1]+","+resultChosenWalkOnly.result['center'][0];
+  document.getElementById('buttonWalkLink').href='comgooglemaps://?saddr='+originLngLat.lat+','+originLngLat.lng+'&daddr='+resultChosenWalkOnly.result['center'][1]+','+resultChosenWalkOnly.result['center'][0]+'&directionsmode=walking';
+  document.getElementById('buttonWalk').style.display="block";
+  //window.location = "maps://?ll="+resultChosenWalkOnly.result['center'][1]+","+resultChosenWalkOnly.result['center'][0];
   /*fetch("https://api.vasttrafik.se/bin/rest.exe/v2/trip?originCoordLat="+originLngLat.lat+"&originCoordLong="+originLngLat.lng+"&originCoordName="+"userPos"
   +"&destCoordLat="+resultChosenWalkOnly.result['center'][1]+"&destCoordLong="+resultChosenWalkOnly.result['center'][0]+"&destCoordName="+resultChosenWalkOnly.result['properties'].title+"&numTrips=7&needGeo=1&onlyWalk=1&format=json", requestOptions)
   .then(response => response.json())
@@ -470,6 +473,7 @@ geocoder.on('clear', () =>{
   document.getElementById('buttonSettings').style.display= 'none';
   document.getElementById('buttonRefresh').style.display= 'none';
   document.getElementById('buttonSetTime').style.display= 'none';
+  document.getElementById('buttonWalk').style.display="none";
   if(mapHasBeenResized){
     map.flyTo({ center: [userPosition.longitude,userPosition.latitude], zoom: 16 });
   } else {
