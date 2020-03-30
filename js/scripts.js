@@ -398,7 +398,7 @@ function getPossibleTripList(resultChosen, newInputEntered){
     +'>On y va à pied !</a></span></div>'; //"
     document.getElementById('possibleTripList').innerHTML+=walkHTML;
     document.getElementById('bigWalkButton').addEventListener("click", walkButtonClicked);
-    document.getElementById('bigWalkButton').addEventListener("touch", walkButtonClicked);
+    document.getElementById('bigWalkButton').addEventListener("touchstart", walkButtonClicked);
   }
   fetch("https://api.vasttrafik.se/bin/rest.exe/v2/trip?originCoordLat="+originLngLat.lat+"&originCoordLong="+originLngLat.lng+"&originCoordName="+originName
   +"&destCoordLat="+resultChosen.result['center'][1]+"&destCoordLong="+resultChosen.result['center'][0]+"&destCoordName="+resultChosen.result['properties'].title+"&numTrips=7&needGeo=1&format=json", requestOptions)
