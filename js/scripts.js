@@ -366,7 +366,9 @@ function getWalkOnlyTripList(resultChosenWalkOnly) {
   console.log('comgooglemaps://?saddr='+originLngLat.lat+','+originLngLat.lng+'&daddr='+resultChosenWalkOnly.result['center'][1]+','+resultChosenWalkOnly.result['center'][0]+'&directionsmode=walking');
   console.log("maps://?ll="+resultChosenWalkOnly.result['center'][1]+","+resultChosenWalkOnly.result['center'][0]);
   document.getElementById('buttonWalkLink').href='comgooglemaps://?saddr='+originLngLat.lat+','+originLngLat.lng+'&daddr='+resultChosenWalkOnly.result['center'][1]+','+resultChosenWalkOnly.result['center'][0]+'&directionsmode=walking';
+  if(screen.width>=730) {
   document.getElementById('buttonWalk').style.display="block";
+  }
   //window.location = "maps://?ll="+resultChosenWalkOnly.result['center'][1]+","+resultChosenWalkOnly.result['center'][0];
   /*fetch("https://api.vasttrafik.se/bin/rest.exe/v2/trip?originCoordLat="+originLngLat.lat+"&originCoordLong="+originLngLat.lng+"&originCoordName="+"userPos"
   +"&destCoordLat="+resultChosenWalkOnly.result['center'][1]+"&destCoordLong="+resultChosenWalkOnly.result['center'][0]+"&destCoordName="+resultChosenWalkOnly.result['properties'].title+"&numTrips=7&needGeo=1&onlyWalk=1&format=json", requestOptions)
@@ -384,6 +386,14 @@ function getPossibleTripList(resultChosen, newInputEntered){
   const originLngLat = userPositionMarker.getLngLat();
   document.getElementById('possibleTripList').innerHTML='';
   const originName="userPos";
+  let walkHTML='';
+  if(screen.width<=730) {
+    walkHTML = '<div style="height: 40px;text-align: center;width: 30%;min-width: 150px;" class="singleTripBox" id="Walk999'+'">'
+    +'<span class="spanLeg" style="line-height: 40px; top: 0%; text-align: center;"><a style="color:black;text-decoration:none;" href="'
+    +'comgooglemaps://?saddr='+originLngLat.lat+','+originLngLat.lng+'&daddr='+resultChosen.result['center'][1]+','+resultChosen.result['center'][0]+'&directionsmode=walking'
+    +'">On y va à pied !</a></span></div>';
+    document.getElementById('possibleTripList').innerHTML+=walkHTML;
+  }
   fetch("https://api.vasttrafik.se/bin/rest.exe/v2/trip?originCoordLat="+originLngLat.lat+"&originCoordLong="+originLngLat.lng+"&originCoordName="+originName
   +"&destCoordLat="+resultChosen.result['center'][1]+"&destCoordLong="+resultChosen.result['center'][0]+"&destCoordName="+resultChosen.result['properties'].title+"&numTrips=7&needGeo=1&format=json", requestOptions)
   .then(response => response.json())
