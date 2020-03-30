@@ -378,10 +378,11 @@ function getWalkOnlyTripList(resultChosenWalkOnly) {
   .then(result => {
     console.log('WALK ONLY TRIPS'+JSON.stringify(result.TripList));
   });*/
-  window.location=walkString;
+  //window.location=walkString;
 }
-function walkButtonClicked(){
+function walkButtonClicked(event){
   console.log('TOUCHER' + walkString);
+  event.stopPropagation();
   window.location=walkString;
   //window.location.assign(walkString);
   //window.open(walkString);
@@ -472,8 +473,8 @@ function getPossibleTripList(resultChosen, newInputEntered){
     //document.getElementById('possibleTripList').addEventListener('click', (event) => clickedResultTrip(event, result.TripList.Trip));
     document.getElementById('possibleTripList').removeEventListener('click', clickedResultTrip);
     document.getElementById('possibleTripList').addEventListener('click', clickedResultTrip);
-    /*document.getElementById('bigWalkButton').addEventListener('click', walkButtonClicked);
-    document.getElementById('bigWalkButton').addEventListener('touchstart', walkButtonClicked);*/
+    document.getElementById('Walk999').addEventListener('click', walkButtonClicked, true);
+    /*document.getElementById('bigWalkButton').addEventListener('touchstart', walkButtonClicked);*/
   //}
   });
 
