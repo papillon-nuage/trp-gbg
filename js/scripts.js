@@ -383,7 +383,8 @@ function walkButtonClicked(){
   console.log('TOUCHER' + walkString);
   window.location=walkString;
   window.location.assign(walkString);
-  
+  window.open(walkString);
+
 }
 // geocoder.on('result', (resultChosen) =>{
 function getPossibleTripList(resultChosen, newInputEntered){
