@@ -361,14 +361,15 @@ geocoder.on('result', (inputResult) => {
 
 function getWalkOnlyTripList(resultChosenWalkOnly) {  
   const originLngLat = userPositionMarker.getLngLat();
-  console.log('google maps url');
-  window.location = 'geo:40.765819,-73.975866';
-  fetch("https://api.vasttrafik.se/bin/rest.exe/v2/trip?originCoordLat="+originLngLat.lat+"&originCoordLong="+originLngLat.lng+"&originCoordName="+"userPos"
+  //console.log('google maps url');
+  //window.location = 'geo:40.765819,-73.975866';
+  window.location = "maps://?q="+resultChosenWalkOnly.result['center'][1]+","+resultChosenWalkOnly.result['center'][0];
+  /*fetch("https://api.vasttrafik.se/bin/rest.exe/v2/trip?originCoordLat="+originLngLat.lat+"&originCoordLong="+originLngLat.lng+"&originCoordName="+"userPos"
   +"&destCoordLat="+resultChosenWalkOnly.result['center'][1]+"&destCoordLong="+resultChosenWalkOnly.result['center'][0]+"&destCoordName="+resultChosenWalkOnly.result['properties'].title+"&numTrips=7&needGeo=1&onlyWalk=1&format=json", requestOptions)
   .then(response => response.json())
   .then(result => {
     console.log('WALK ONLY TRIPS'+JSON.stringify(result.TripList));
-  });
+  });*/
 }
 
 // geocoder.on('result', (resultChosen) =>{
