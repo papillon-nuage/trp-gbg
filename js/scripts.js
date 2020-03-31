@@ -45,6 +45,10 @@ var departStopId4;
 var departStopName4;
 var directionStopId4;
 var directionStopName4;
+var settingsForTripQuery = {
+  'numTrips': 7,
+
+}
 
 var currentHeaders = new Headers();
 //currentHeaders.append("Authorization", "Bearer "+currentToken);
@@ -321,10 +325,36 @@ document.getElementById('inputBox').addEventListener("click", function( event ) 
   document.getElementsByClassName('mapboxgl-ctrl-geocoder--button')[0].display = 'block';
 });
 
+
 let userPosition;
 let numTrips;
 let saveResultChosen;
 let tripResults;
+
+
+
+var userPositionMarker = new mapboxgl.Marker({
+  draggable: true,
+  color: '#4264fb'
+});
+navigator.geolocation.getCurrentPosition(posi => {console.log(posi);centerMapOnUser(posi.coords)});
+function centerMapOnUser (position) {
+  let heightOffset = 0.0010;
+  if(window.matchMedia("(max-height: 700px)").matches){
+    heightOffset = 0.0005;
+  } else {
+    heightOffset = 0.0010;
+  }
+  userPosition = position;
+  map.flyTo({ center: [position.longitude,position.latitude-heightOffset], zoom: 16 });
+  userPositionMarker.setLngLat([position.longitude, position.latitude]);
+  userPositionMarker.addTo(map);
+}
+
+
+
+
+
 geocoder.on('result', (inputResult) => {
   document.getElementsByClassName('mapboxgl-ctrl-geocoder--input')[0].disabled = true;
   document.getElementsByClassName('mapboxgl-ctrl-geocoder--input')[0].active = false;
@@ -380,14 +410,7 @@ function getWalkOnlyTripList(resultChosenWalkOnly) {
   });*/
   //window.location=walkString;
 }
-function walkButtonClicked(event){
-  console.log('TOUCHER' + walkString);
-  event.stopPropagation();
-  window.location=walkString;
-  //window.location.assign(walkString);
-  //window.open(walkString);
 
-}
 // geocoder.on('result', (resultChosen) =>{
 function getPossibleTripList(resultChosen, newInputEntered){
   console.log('Result'+resultChosen.result['center']);
@@ -495,7 +518,8 @@ geocoder.on('clear', () =>{
   document.getElementById('buttonSettings').style.display= 'none';
   document.getElementById('buttonRefresh').style.display= 'none';
   document.getElementById('buttonSetTime').style.display= 'none';
-  document.getElementById('buttonWalk').style.display="none";
+  document.getElementById('buttonWalk').style.display= 'none';
+  document.getElementById('panelSettings').style.display= 'none';
   if(mapHasBeenResized){
     map.flyTo({ center: [userPosition.longitude,userPosition.latitude], zoom: 16 });
   } else {
@@ -504,9 +528,9 @@ geocoder.on('clear', () =>{
 
 });
     
-const getGeoRef = async(geoRefURL,requestOptions) => {
+/*const getGeoRef = async(geoRefURL,requestOptions) => {
   return fetch(geoRefURL, requestOptions);
-}
+}*/
 
 
 
@@ -614,7 +638,8 @@ async function clickedResultTrip(ev) {
       }
       htmlToAdd += '</div>';
 
-      const currentPromise = getGeoRef(currentLeg.GeometryRef.ref,requestOptions);
+      //const currentPromise = getGeoRef(currentLeg.GeometryRef.ref,requestOptions);
+      const currentPromise = fetch(currentLeg.GeometryRef.ref, requestOptions);
       promiseArray.push(currentPromise);
       console.log(currentPromise);
       console.log(promiseArray);
@@ -685,25 +710,6 @@ async function clickedResultTrip(ev) {
   }
 }
 
-let scale = 1;
-function zoom(event,el) {
-  event.preventDefault();
-
-  scale += event.deltaY * -0.01;
-  console.log('scale = '+scale);
-  //scale = scale*3;
-  if(scale<0) scale=0;
-  // Restrict scale
-  //scale = Math.min(Math.max(.125, scale), 4);
-
-  // Apply scale transform
-  el.style.height = 49+scale*4+`%`;
-  //el.style.transform = `scale(${scale})`;
-}
-
-
-
-
 
 
 function fitToTripLine(arrayWithLineCoords) {
@@ -715,11 +721,6 @@ function fitToTripLine(arrayWithLineCoords) {
   });
   //var coordinates = arrayWithLineCoords[0].geometry.coordinates; 
   var coordinates = allLegCoords;
-  // Pass the first coordinates in the LineString to `lngLatBounds` &
-  // wrap each coordinate pair in `extend` to include them in the bounds
-  // result. A variation of this technique could be applied to zooming
-  // to the bounds of multiple Points or Polygon geomteries - it just
-  // requires wrapping all the coordinates with the extend method.
   var bounds = coordinates.reduce(function(bounds, coord) {
   return bounds.extend(coord);
   }, new mapboxgl.LngLatBounds(coordinates[0], coordinates[0]));
@@ -729,66 +730,80 @@ function fitToTripLine(arrayWithLineCoords) {
   });
   // map.setZoom(map.getZoom()-2);
   // map.setCenter(new mapboxgl.LngLat (map.getCenter().lng,map.getCenter().lat-0.0100));
-  }
+}
   
 
-  //map.flyTo({ center: [resultChosen.result['center'][0],resultChosen.result['center'][1]-0.0043], zoom: 15});
+function walkButtonClicked(event){
+  console.log('TOUCHER' + walkString);
+  event.stopPropagation();
+  window.location=walkString;
+  console.log('finTOUCHER');
+  //window.location.assign(walkString);
+  //window.open(walkString);
 
-// 57.709181    ,   11.970838                57.711623 , 11.970489    0.0025
-
-
-/*
-accessToken: mapboxgl.accessToken,
- 
-// limit results to Australia
-countries: 'au',
- 
-// further limit results to the geographic bounds representing the region of
-// New South Wales
-bbox: [139.965, -38.03, 155.258, -27.839],
- 
-// apply a client side filter to further limit results to those strictly within
-// the New South Wales region
-filter: function(item) {
-// returns true if item contains New South Wales region
-return item.context
-.map(function(i) {
-// id is in the form {index}.{id} per https://github.com/mapbox/carmen/blob/master/carmen-geojson.md
-// this example attempts to find the `region` named `New South Wales`
-return (
-i.id.split('.').shift() === 'region' &&
-i.text === 'New South Wales'
-);
-})
-.reduce(function(acc, cur) {
-return acc || cur;
-});*/
-
-
-
-
-
-
-
-
-
-var userPositionMarker = new mapboxgl.Marker({
-  draggable: true,
-  color: '#4264fb'
-});
-navigator.geolocation.getCurrentPosition(posi => {console.log(posi);centerMapOnUser(posi.coords)});
-function centerMapOnUser (position) {
-  let heightOffset = 0.0010;
-  if(window.matchMedia("(max-height: 700px)").matches){
-    heightOffset = 0.0005;
-  } else {
-    heightOffset = 0.0010;
-  }
-  userPosition = position;
-  map.flyTo({ center: [position.longitude,position.latitude-heightOffset], zoom: 16 });
-  userPositionMarker.setLngLat([position.longitude, position.latitude]);
-  userPositionMarker.addTo(map);
 }
+
+document.getElementById('precBox').addEventListener('click', (event) => {    
+  document.getElementById('inputBox').style.display= '';  
+  document.getElementById('inputBox').style.bottom= '49%';
+  document.getElementById('possibleTripList').style.display= '';
+  document.getElementById('precBox').style.display= 'none';
+  document.getElementById('tripDetailsBox').style.display= 'none';
+  if (map.getLayer('lines')) map.removeLayer('lines');
+  if (map.getSource('lines')) map.removeSource('lines');
+  map.flyTo({ center: [saveResultChosen.result['center'][0],saveResultChosen.result['center'][1]], zoom: 15}); //-0.0043
+
+
+});
+
+
+document.getElementById('buttonSettings').addEventListener("click", (event) => {
+  if(document.getElementById('panelSettings').style.display == 'none'){  
+    document.getElementById('panelSettings').style.display = 'block';
+  } else {     
+    document.getElementById('panelSettings').style.display = 'none';
+  }
+});
+
+document.getElementById('tramEmoji').addEventListener("click", (event) => {
+  includeExcludeTransport(event, 'tramEmoji');
+});
+document.getElementById('busEmoji').addEventListener("click", (event) => {
+  includeExcludeTransport(event, 'busEmoji');
+});
+document.getElementById('boatEmoji').addEventListener("click", (event) => {
+  includeExcludeTransport(event, 'boatEmoji');
+});
+document.getElementById('trainEmoji').addEventListener("click", (event) => {
+  includeExcludeTransport(event, 'trainEmoji');
+});
+document.getElementById('walkEmoji').addEventListener("click", (event) => {
+  selectWalkingSpeed(event, 'walkEmoji', 'runEmoji');
+});
+document.getElementById('runEmoji').addEventListener("click", (event) => {
+  selectWalkingSpeed(event, 'runEmoji', 'walkEmoji');
+});
+
+document.getElementById('buttonRefresh').addEventListener('click', (event) => getPossibleTripList(saveResultChosen, false));
+  
+  
+function includeExcludeTransport(ev, elementId) {
+  const elemRef = document.getElementById(elementId);
+  if(elemRef.style.opacity==1){
+    elemRef.style.opacity=0.2;
+  } else {
+    elemRef.style.opacity=1;
+  }
+}   
+  
+function selectWalkingSpeed(ev, elementSelectedId, elementDeselectedId) {
+  const elemSelRef = document.getElementById(elementSelectedId);
+  const elemDeselRef = document.getElementById(elementDeselectedId);
+  elemSelRef.style.backgroundColor= '#dedede';
+  elemSelRef.style.opacity = 1;
+  elemDeselRef.style.backgroundColor= '#f2f2f2';
+  elemDeselRef.style.opacity = 0.5;
+} 
 /*
 
 const node = document.getElementById("userDest");
@@ -821,28 +836,25 @@ minZoom: 8
 
 
 
-document.getElementById('precBox').addEventListener('click', (event) => {    
-  document.getElementById('inputBox').style.display= '';  
-  document.getElementById('inputBox').style.bottom= '49%';
-  document.getElementById('possibleTripList').style.display= '';
-  document.getElementById('precBox').style.display= 'none';
-  document.getElementById('tripDetailsBox').style.display= 'none';
-  if (map.getLayer('lines')) map.removeLayer('lines');
-  if (map.getSource('lines')) map.removeSource('lines');
-  map.flyTo({ center: [saveResultChosen.result['center'][0],saveResultChosen.result['center'][1]], zoom: 15}); //-0.0043
+
+let scale = 1;
+function zoom(event,el) {
+  event.preventDefault();
+
+  scale += event.deltaY * -0.01;
+  console.log('scale = '+scale);
+  //scale = scale*3;
+  if(scale<0) scale=0;
+  // Restrict scale
+  //scale = Math.min(Math.max(.125, scale), 4);
+
+  // Apply scale transform
+  el.style.height = 49+scale*4+`%`;
+  //el.style.transform = `scale(${scale})`;
+}
 
 
-});
-
-document.getElementById('buttonRefresh').addEventListener('click', (event) => getPossibleTripList(saveResultChosen, false));
-
-
-
-
-
-
-
-
+/*
 
 var todayDateTime = new Date();
 console.log(todayDateTime);
@@ -887,7 +899,7 @@ var journeyIdTojourneyURL = new Map();
     })
     .catch(error => console.log('error', error));
 
-  }
+  }*/
   /*createTimeTable('sannegårdshamnen','volvo%20it',todayDate,'07:00',90,requestOptions,'trip','tableContent');
   createTimeTable('volvo%20it','sannegårdshamnen',todayDate,'16:00',90,requestOptions,'trip2','tableContent2');
   createTimeTable('lindholmspiren','stenpiren',todayDate,todayTime,30,requestOptions,'trip3','tableContent3');
@@ -895,7 +907,7 @@ var journeyIdTojourneyURL = new Map();
 
   //fetch("https://api.vasttrafik.se/bin/rest.exe/v2/trip?originCoordLat=57.704809&originCoordLong=11.926041&originCoordName=Gamla%20ceresgatan%207%2C%20G%C3%B6teborg&destCoordLat=57.696990&destCoordLong=11.986500&destCoordName=Sk%C3%A5negatan%2039%2C%20412%2052%20G%C3%B6teborg");
 
-
+/*
   function journeyClicked (elem,wantedDirectionStop) {
     console.log(elem);
     journeyIdTojourneyURL.forEach((val,key) => {
@@ -963,7 +975,7 @@ var journeyIdTojourneyURL = new Map();
         }
         });*/
 
-        var directions = new MapboxDirections({
+      /*  var directions = new MapboxDirections({
           accessToken: mapboxgl.accessToken,
           unit: 'metric',
           profile: 'mapbox/walking',
@@ -1001,5 +1013,5 @@ var journeyIdTojourneyURL = new Map();
 
 
 
-  }
+  }*/
 //https://api.vasttrafik.se/bin/rest.exe/v2/departureBoard?id=9021014005730000&date=2020-03-11&time=07%3A37&useVas=0&useLDTrain=0&useRegTrain=0&timeSpan=60&direction=9021014007487000&format=json
