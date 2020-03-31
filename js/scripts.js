@@ -757,11 +757,11 @@ document.getElementById('precBox').addEventListener('click', (event) => {
 });
 
 
-document.getElementById('buttonSettings').addEventListener("click", (event) => {
-  if(document.getElementById('panelSettings').style.display == 'none'){  
-    document.getElementById('panelSettings').style.display = 'block';
-  } else {     
+document.getElementById('buttonSettings').addEventListener('click', (event) => {
+  if(document.getElementById('panelSettings').style.display == 'block'){  
     document.getElementById('panelSettings').style.display = 'none';
+  } else {
+    document.getElementById('panelSettings').style.display = 'block';
   }
 });
 
