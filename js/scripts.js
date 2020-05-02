@@ -46,8 +46,13 @@ var departStopName4;
 var directionStopId4;
 var directionStopName4;
 var settingsForTripQuery = {
-  'numTrips': 7,
-
+  'useTram':1,
+  'useBus': 1,
+  'useBoat': 1,
+  'useTrain': 1,
+  'walkSpeed': 2,
+  'numTrips': 3,
+  'maxChanges': 3
 }
 
 var currentHeaders = new Headers();
@@ -351,7 +356,24 @@ function centerMapOnUser (position) {
   userPositionMarker.addTo(map);
 }
 
+function clickOnDocument(evt) {
+  const buttonSettingsElement = document.getElementById("buttonSettings");
+  const panelSettingsElement = document.getElementById("panelSettings");
+  let targetElement = evt.target; // clicked element
 
+  do {
+      if (targetElement == panelSettingsElement || targetElement == buttonSettingsElement) {
+          // This is a click inside. Do nothing, just return.
+          // document.getElementById("flyout-debug").textContent = "Clicked inside!";
+          return;
+      }
+      // Go up the DOM
+      targetElement = targetElement.parentNode;
+  } while (targetElement);
+
+  // This is a click outside.      
+  document.getElementById('panelSettings').style.display = 'none';
+}
 
 
 
@@ -365,6 +387,7 @@ geocoder.on('result', (inputResult) => {
   document.getElementById('buttonSettings').style.display= 'inline-block';
   document.getElementById('buttonRefresh').style.display= 'inline-block';
   document.getElementById('buttonSetTime').style.display= 'inline-block';
+  document.addEventListener("click", clickOnDocument);
   let iconToInsert = document.createElement("i");
   iconToInsert.id = 'searchInputMarker';
   iconToInsert.classList.add('fas');
@@ -428,7 +451,14 @@ function getPossibleTripList(resultChosen, newInputEntered){
     document.getElementById('possibleTripList').innerHTML+=walkHTML;
   }
   fetch("https://api.vasttrafik.se/bin/rest.exe/v2/trip?originCoordLat="+originLngLat.lat+"&originCoordLong="+originLngLat.lng+"&originCoordName="+originName
-  +"&destCoordLat="+resultChosen.result['center'][1]+"&destCoordLong="+resultChosen.result['center'][0]+"&destCoordName="+resultChosen.result['properties'].title+"&numTrips=7&needGeo=1&format=json", requestOptions)
+  +"&destCoordLat="+resultChosen.result['center'][1]+"&destCoordLong="+resultChosen.result['center'][0]+"&destCoordName="+resultChosen.result['properties'].title
+  +"&numTrips="+settingsForTripQuery.numTrips+"&maxChanges="+settingsForTripQuery.maxChanges
+  +"&useTram="+settingsForTripQuery.useTram
+  +"&useBus="+settingsForTripQuery.useBus
+  +"&useBoat="+settingsForTripQuery.useBoat
+  +"&useTrain="+settingsForTripQuery.useTrain
+  +"&walkSpeed="+settingsForTripQuery.walkSpeed
+  +"&needGeo=1&format=json", requestOptions)
   .then(response => response.json())
   .then(result => {
     console.log(result.TripList);
@@ -496,7 +526,9 @@ function getPossibleTripList(resultChosen, newInputEntered){
     //document.getElementById('possibleTripList').addEventListener('click', (event) => clickedResultTrip(event, result.TripList.Trip));
     document.getElementById('possibleTripList').removeEventListener('click', clickedResultTrip);
     document.getElementById('possibleTripList').addEventListener('click', clickedResultTrip);
-    document.getElementById('Walk999').addEventListener('click', walkButtonClicked, true);
+    if(document.getElementById('Walk999')!=undefined) {
+      document.getElementById('Walk999').addEventListener('click', walkButtonClicked, true);
+    }
     /*document.getElementById('bigWalkButton').addEventListener('touchstart', walkButtonClicked);*/
   //}
   });
@@ -520,6 +552,7 @@ geocoder.on('clear', () =>{
   document.getElementById('buttonSetTime').style.display= 'none';
   document.getElementById('buttonWalk').style.display= 'none';
   document.getElementById('panelSettings').style.display= 'none';
+  document.removeEventListener("click", clickOnDocument);
   if(mapHasBeenResized){
     map.flyTo({ center: [userPosition.longitude,userPosition.latitude], zoom: 16 });
   } else {
@@ -767,15 +800,23 @@ document.getElementById('buttonSettings').addEventListener('click', (event) => {
 
 document.getElementById('tramEmoji').addEventListener("click", (event) => {
   includeExcludeTransport(event, 'tramEmoji');
+  // settingsForTripQuery.useTram = !settingsForTripQuery.useTram;
+  settingsForTripQuery.useTram = (settingsForTripQuery.useTram == 0) ? 1 : 0;
 });
 document.getElementById('busEmoji').addEventListener("click", (event) => {
   includeExcludeTransport(event, 'busEmoji');
+  // settingsForTripQuery.useBus = !settingsForTripQuery.useBus;
+  settingsForTripQuery.useBus = (settingsForTripQuery.useBus == 0) ? 1 : 0;
 });
 document.getElementById('boatEmoji').addEventListener("click", (event) => {
   includeExcludeTransport(event, 'boatEmoji');
+  // settingsForTripQuery.useBoat = !settingsForTripQuery.useBoat;
+  settingsForTripQuery.useBoat = (settingsForTripQuery.useBoat == 0) ? 1 : 0;
+  console.log('settings boat:'+settingsForTripQuery.useBoat);
 });
 document.getElementById('trainEmoji').addEventListener("click", (event) => {
   includeExcludeTransport(event, 'trainEmoji');
+  settingsForTripQuery.useTrain = !settingsForTripQuery.useTrain;
 });
 document.getElementById('walkEmoji').addEventListener("click", (event) => {
   selectWalkingSpeed(event, 'walkEmoji', 'runEmoji');
@@ -783,6 +824,21 @@ document.getElementById('walkEmoji').addEventListener("click", (event) => {
 document.getElementById('runEmoji').addEventListener("click", (event) => {
   selectWalkingSpeed(event, 'runEmoji', 'walkEmoji');
 });
+document.getElementById('numTripsSpanInput').addEventListener('change', (event) => {
+  settingsForTripQuery.numTrips = event.target.value;
+  console.log('VALUE = '+event.target.value);
+});
+document.getElementById('maxChangesSpanInput').addEventListener('change', (event) => {
+  settingsForTripQuery.maxChanges = event.target.value;
+  console.log('VALUE = '+event.target.value);
+});
+
+// document.getElementById('numTripsSpan').innerText=settingsForTripQuery.numTrips;
+// document.getElementById('maxChangesSpan').innerText=settingsForTripQuery.maxChanges;
+
+document.getElementById('numTripsSpanInput').value=settingsForTripQuery.numTrips;
+document.getElementById('maxChangesSpanInput').value=settingsForTripQuery.maxChanges;
+
 
 document.getElementById('buttonRefresh').addEventListener('click', (event) => getPossibleTripList(saveResultChosen, false));
   
@@ -803,6 +859,11 @@ function selectWalkingSpeed(ev, elementSelectedId, elementDeselectedId) {
   elemSelRef.style.opacity = 1;
   elemDeselRef.style.backgroundColor= '#f2f2f2';
   elemDeselRef.style.opacity = 0.5;
+  if(elementSelectedId == 'runEmoji'){
+    settingsForTripQuery.walkSpeed=115;
+  } else {
+    settingsForTripQuery.walkSpeed=85;
+  }
 } 
 /*
 
