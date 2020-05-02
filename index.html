@@ -45,16 +45,20 @@
       <div id="runEmoji" style="display:inline-block;height: 35px;width: 50px;background-color: #dedede;line-height: 35px;border-top-right-radius: 4px; opacity: 1;">🏃</div>
     </div>
     <div style="margin-top: 10px; border-top-style: ridge; padding-top: 10px;  ">
-      <div style="display:inline-block;width: 48%;">
-        <span style="font-size: medium;">Trips ≥</span>
+      <div style="display:inline-block;width: 46%;">
+        <span style="font-size: medium;">
+          <label for="numTripsSpanInput">Trips ≥</label>
+        </span>
         <span id="numTripsSpan">
-          <input type="number" id="numTripsSpanInput" name="quantityOfTrips" min="1" max="14" value="0" style="width: 40px;border-style: none;"> 
+          <input type="number" pattern="[0-9]*" inputmode="numeric" id="numTripsSpanInput" name="quantityOfTrips" min="1" max="14" value="0" style="width: 40px;border-style: none;"> 
         </span>
       </div>
-      <div style="display:inline-block;width: 48%;">
-        <span style="font-size: medium;">Changes ≤</span>
+      <div style="display:inline-block;width: 50%;">
+        <span style="font-size: medium;">
+          <label for="numTripsSpanInput">Changes ≤</label>
+        </span>
         <span id="maxChangesSpan">
-          <input type="number" id="maxChangesSpanInput" name="quantityOfChange" min="0" max="5" value="0" style="width: 30px;border-style: none;">
+          <input type="number" pattern="[0-9]*" inputmode="numeric" id="maxChangesSpanInput" name="quantityOfChange" min="0" max="5" value="0" style="width: 30px;border-style: none;">
         </span>
       </div>
     </div>

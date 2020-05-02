@@ -51,7 +51,7 @@ var settingsForTripQuery = {
   'useBoat': 1,
   'useTrain': 1,
   'walkSpeed': 2,
-  'numTrips': 3,
+  'numTrips': 7,
   'maxChanges': 3
 }
 
