@@ -359,10 +359,17 @@ function centerMapOnUser (position) {
 function clickOnDocument(evt) {
   const buttonSettingsElement = document.getElementById("buttonSettings");
   const panelSettingsElement = document.getElementById("panelSettings");
+  const buttonSetTimeElement = document.getElementById("buttonSetTime");
+  const panelSetTimeElement = document.getElementById("panelSetTime");
   let targetElement = evt.target; // clicked element
 
   do {
       if (targetElement == panelSettingsElement || targetElement == buttonSettingsElement) {
+          // This is a click inside. Do nothing, just return.
+          // document.getElementById("flyout-debug").textContent = "Clicked inside!";
+          return;
+      }
+      if (targetElement == panelSetTimeElement || targetElement == buttonSetTimeElement) {
           // This is a click inside. Do nothing, just return.
           // document.getElementById("flyout-debug").textContent = "Clicked inside!";
           return;
@@ -373,6 +380,7 @@ function clickOnDocument(evt) {
 
   // This is a click outside.      
   document.getElementById('panelSettings').style.display = 'none';
+  document.getElementById('panelSetTime').style.display = 'none';
 }
 
 
@@ -552,6 +560,7 @@ geocoder.on('clear', () =>{
   document.getElementById('buttonSetTime').style.display= 'none';
   document.getElementById('buttonWalk').style.display= 'none';
   document.getElementById('panelSettings').style.display= 'none';
+  document.getElementById('panelSetTime').style.display= 'none';
   document.removeEventListener("click", clickOnDocument);
   if(mapHasBeenResized){
     map.flyTo({ center: [userPosition.longitude,userPosition.latitude], zoom: 16 });
@@ -789,8 +798,17 @@ document.getElementById('precBox').addEventListener('click', (event) => {
 
 });
 
+document.getElementById('buttonSetTime').addEventListener('click', (event) => {
+  document.getElementById('panelSettings').style.display = 'none';
+  if(document.getElementById('panelSetTime').style.display == 'block'){  
+    document.getElementById('panelSetTime').style.display = 'none';
+  } else {
+    document.getElementById('panelSetTime').style.display = 'block';
+  }
+});
 
 document.getElementById('buttonSettings').addEventListener('click', (event) => {
+  document.getElementById('panelSetTime').style.display = 'none';
   if(document.getElementById('panelSettings').style.display == 'block'){  
     document.getElementById('panelSettings').style.display = 'none';
   } else {
@@ -838,6 +856,25 @@ document.getElementById('maxChangesSpanInput').addEventListener('change', (event
 
 document.getElementById('numTripsSpanInput').value=settingsForTripQuery.numTrips;
 document.getElementById('maxChangesSpanInput').value=settingsForTripQuery.maxChanges;
+
+var currentDateTime = new Date();
+
+var day = currentDateTime.getDate(),
+    month = currentDateTime.getMonth() + 1,
+    year = currentDateTime.getFullYear(),
+    hour = currentDateTime.getHours(),
+    min  = currentDateTime.getMinutes();
+
+month = (month < 10 ? "0" : "") + month;
+day = (day < 10 ? "0" : "") + day;
+hour = (hour < 10 ? "0" : "") + hour;
+min = (min < 10 ? "0" : "") + min;
+
+var currentDay = year + "-" + month + "-" + day,
+    displayTime = hour + ":" + min; 
+
+document.getElementById('setDateInput').value = currentDay;      
+document.getElementById("setTimeInput").value = displayTime;
 
 
 document.getElementById('buttonRefresh').addEventListener('click', (event) => getPossibleTripList(saveResultChosen, false));
