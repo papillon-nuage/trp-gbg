@@ -291,6 +291,32 @@ svg.mapboxgl-ctrl-geocoder--icon-close{
     line-height: 35px;
     cursor: pointer;
 }
+#panelSetTime{
+    margin-left: calc(66% + 79px);
+    /*display: inline-block;*/
+    position: absolute;
+    width: 250px;
+    height: 170px;
+    transform: translateX(-43%);
+    top: 55px;
+    line-height: 30px;
+    z-index: 120;
+    font-size: larger;
+}
+#panelSetTime::before{
+    content: "";
+    position: absolute;
+    right: 50%;
+    transform: translateX(50%);
+    top: -13px;
+    width: 0;
+    height: 0;
+    border-top: 3px solid transparent;
+    border-right: 13px solid transparent;
+    border-bottom: 23px solid white;
+    border-left: 13px solid transparent;
+    z-index: 150;
+}
 #panelSettings{
     margin-left: 60%;
     /*display: inline-block;*/
