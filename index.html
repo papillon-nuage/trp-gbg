@@ -41,7 +41,7 @@
       <div id="trainEmoji" style="color: gray;opacity: 1;  display:  inline-block;      margin-left: 10px;      margin-right: 10px;      ">🚂</div>
     </div>
     <div style="margin-top: 10px; font-size: x-large; border-top-style: ridge; padding-top: 15px;  ">
-      <div id="walkEmoji" style="display:inline-block;height: 35px;width: 50px;background-color: #f2f2f2;line-height: 35px; opacity: 0.5;">🚶</div>
+      <div id="walkEmoji" style="display:inline-block;height: 35px;width: 50px;background-color: #f2f2f2;line-height: 35px;border-top-left-radius: 4px; opacity: 0.5;">🚶</div>
       <div id="runEmoji" style="display:inline-block;height: 35px;width: 50px;background-color: #dedede;line-height: 35px;border-top-right-radius: 4px; opacity: 1;">🏃</div>
     </div>
     <div style="margin-top: 10px; border-top-style: ridge; padding-top: 10px;  ">
@@ -64,16 +64,24 @@
     </div>
   </div>
   <div id="panelSetTime" class="topActionButtons" style="display: none;">
-    <div style="margin-top: 30px;"></div>
+    <div style="margin-top: 15px; margin-bottom:15px; font-size: x-large;">
+      <div id="departEmoji" style="display:inline-block;height: 35px;width: 50px;background-color: #dedede;line-height: 35px;border-top-left-radius: 4px; opacity: 1;">🛫</div>
+      <div id="arrivalEmoji" style="display:inline-block;height: 35px;width: 50px;background-color: #f2f2f2;line-height: 35px;border-top-right-radius: 4px; opacity: 0.5;">🛬</div>
+    </div>
+    <div style="margin-bottom: 15px;">
+      <!--<span>🕒</span><span>🕧</span><span>🕛</span>-->
+    </div>
     <div style="font-size: medium;">
-      <div>
+      <div><span>📅</span>
         <input type="date" id="setDateInput" name="trip-start"
         value=""
         min="" max="">
+        <span style="background: #37ab2ed9;color:white;padding: 5px;padding-right: 6px;padding-left: 3px;margin-left: 10px;">+1</span>
       </div>
-      <div style="margin-top:10px;">
+      <div style="margin-top:10px;"><span>⏱️</span>
         <input type="time" id="setTimeInput" name="trip-start"
-        value="">
+        value=""><span style="background: #37ab2ed9;color:white;padding: 5px;padding-right: 6px;padding-left: 3px;margin-left: 10px;margin-right: 10px;">+15</span>
+        <span style="background: #37ab2ed9;padding: 5px;color:white;padding-right: 6px;padding-left: 3px;">+30</span>
       </div>
     </div>
   </div>
