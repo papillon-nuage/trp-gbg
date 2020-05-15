@@ -342,7 +342,12 @@ var userPositionMarker = new mapboxgl.Marker({
   draggable: true,
   color: '#4264fb'
 });
-navigator.geolocation.getCurrentPosition(posi => {console.log(posi);centerMapOnUser(posi.coords)});
+navigator.geolocation.getCurrentPosition(posi => {
+  console.log(posi);
+  centerMapOnUser(posi.coords);
+  getPossibleDepartureStopList();
+});
+
 function centerMapOnUser (position) {
   let heightOffset = 0.0010;
   if(window.matchMedia("(max-height: 700px)").matches){
@@ -351,10 +356,76 @@ function centerMapOnUser (position) {
     heightOffset = 0.0010;
   }
   userPosition = position;
-  map.flyTo({ center: [position.longitude,position.latitude-heightOffset], zoom: 16 });
+  map.flyTo({ center: [position.longitude,position.latitude-heightOffset], zoom: 15 });
   userPositionMarker.setLngLat([position.longitude, position.latitude]);
   userPositionMarker.addTo(map);
 }
+
+function getPossibleDepartureStopList() {
+  const originLngLat = userPositionMarker.getLngLat();
+  let stopListMap = new Map();
+  fetch("https://api.vasttrafik.se/bin/rest.exe/v2/location.nearbystops?originCoordLat="+originLngLat.lat+"&originCoordLong="+originLngLat.lng
+  +"&maxNo=30&maxDist=2000&format=json", requestOptions)
+  .then(response => response.json())
+  .then(result => {
+    console.log(result.LocationList.StopLocation);
+    result.LocationList.StopLocation.forEach((stop)=> {
+      if(stop.track==undefined) {
+        if (stopListMap.size<5) {
+          
+          /*let stopPositionMarker = new mapboxgl.Marker({
+            draggable: false,
+            color: '#4264fb'
+          });
+          stopPositionMarker.setLngLat([stop.lon, stop.lat]);
+          // stopPositionMarker.addTo(map);
+
+          var popup = new mapboxgl.Popup({ closeOnClick: false })
+          .setLngLat([stop.lon, stop.lat])
+          .setHTML('<strong>🚌 '+stop.name.replace(', Göteborg','')+'</strong>')
+          .addTo(map);*/
+
+          
+          var popup = new mapboxgl.Popup({ offset: 15 }).setHTML(
+            '<strong>'+stop.name.replace(', Göteborg','')+'</strong>'
+            );
+            
+            // create DOM element for the marker
+            var el = document.createElement('div');
+            el.innerText = '🚌';
+            el.classList.add('busMarker');
+            el.id = stop.id;
+            
+            // create the marker
+            let currentMark = new mapboxgl.Marker(el)
+            .setLngLat([stop.lon, stop.lat])
+            .setPopup(popup) // sets a popup on this marker
+            .addTo(map);
+
+            el.addEventListener("click", function( event ) {
+              console.log(event.target.id);
+            })
+
+          stopListMap.set(stop.name,stop);
+        }
+      }
+    });
+    console.log(stopListMap);
+
+  });
+}
+
+/*map.on('click', 'places', function(e) {
+  var coordinates = e.features[0].geometry.coordinates.slice();
+  var description = e.features[0].properties.description;
+   
+  // Ensure that if the map is zoomed out such that multiple
+  // copies of the feature are visible, the popup appears
+  // over the copy being pointed to.
+  while (Math.abs(e.lngLat.lng - coordinates[0]) > 180) {
+  coordinates[0] += e.lngLat.lng > coordinates[0] ? 360 : -360;
+  }
+}*/
 
 function clickOnDocument(evt) {
   const buttonSettingsElement = document.getElementById("buttonSettings");
@@ -408,6 +479,21 @@ geocoder.on('result', (inputResult) => {
   saveResultChosen = inputResult;
   document.getElementById('bottomGreen').classList.add('bottomGreenExtended');
   document.getElementById('inputBox').classList.add('inputBoxExtended');
+  // document.getElementById('inputDepartBox').style.display='';
+  document.getElementById('inputDepartBox').style.bottom='73%';
+  /*document.getElementById('inputDepartBox').classList.remove('normalTrans');
+  document.getElementById('inputDepartBox').classList.add('longerTrans');*/
+
+  let iconToInsertDepart = document.createElement("i");
+  iconToInsertDepart.id = 'searchInputMarkerDepart';
+  iconToInsertDepart.classList.add('fas');
+  iconToInsertDepart.classList.add('fa-map-marker-alt');
+  if(document.getElementById('searchInputMarkerDepart')==undefined) {
+    document.getElementById('inputDepartBox').insertBefore(iconToInsertDepart,document.getElementById('inputDepartBox').firstChild);
+  }
+
+  document.getElementById('inputDepartBox').style.bottom='calc(73% + 51px)';
+  document.getElementById('inputDepartInput').value = (userPositionMarker.getLngLat()!=undefined) ? 'My Position' : 'Enter a departure position';
   if(mapHasBeenResized) {
     map.flyTo({ center: [inputResult.result['center'][0],inputResult.result['center'][1]], zoom: 15});
   } else {
@@ -550,11 +636,13 @@ geocoder.on('clear', () =>{
   document.getElementsByClassName('mapboxgl-ctrl-geocoder--input')[0].style.color= '';
   document.getElementsByClassName('mapboxgl-ctrl-geocoder--button')[0].display = '';
   document.getElementById('searchInputMarker').remove();
+  document.getElementById('searchInputMarkerDepart').remove();
   document.getElementsByClassName('mapboxgl-ctrl-geocoder--icon-search')[0].style.display = '';
   document.getElementById('searchEmoji').style.display = '';
   document.getElementById('possibleTripList').innerHTML='';
   document.getElementById('bottomGreen').classList.remove('bottomGreenExtended');
   document.getElementById('inputBox').classList.remove('inputBoxExtended');
+  document.getElementById('inputDepartBox').style.display='none';
   document.getElementById('buttonSettings').style.display= 'none';
   document.getElementById('buttonRefresh').style.display= 'none';
   document.getElementById('buttonSetTime').style.display= 'none';
@@ -719,7 +807,8 @@ async function clickedResultTrip(ev) {
     //move
     document.getElementById('bottomGreen').style.height = '49%';    
     // document.getElementById('inputBox').style.top= '49.8%';    
-    document.getElementById('inputBox').style.display= 'none';  
+    document.getElementById('inputBox').style.display= 'none'; 
+    document.getElementById('inputDepartBox').style.display='none'; 
     //document.getElementById('possibleTripList').style.top= '5%';
     document.getElementById('possibleTripList').style.display= 'none';
     document.getElementById('precBox').style.display= 'block';
@@ -788,6 +877,8 @@ function walkButtonClicked(event){
 document.getElementById('precBox').addEventListener('click', (event) => {    
   document.getElementById('inputBox').style.display= '';  
   document.getElementById('inputBox').style.bottom= '49%';
+  document.getElementById('inputDepartBox').style.display='';
+  document.getElementById('inputDepartBox').style.bottom='calc(49% + 51px)';
   document.getElementById('possibleTripList').style.display= '';
   document.getElementById('precBox').style.display= 'none';
   document.getElementById('tripDetailsBox').style.display= 'none';
@@ -857,8 +948,8 @@ document.getElementById('maxChangesSpanInput').addEventListener('change', (event
 document.getElementById('numTripsSpanInput').value=settingsForTripQuery.numTrips;
 document.getElementById('maxChangesSpanInput').value=settingsForTripQuery.maxChanges;
 
-var currentDateTime = new Date();
-
+// var currentDateTime = new Date();
+function formatCorrectlyDate (currentDateTime) {
 var day = currentDateTime.getDate(),
     month = currentDateTime.getMonth() + 1,
     year = currentDateTime.getFullYear(),
@@ -870,11 +961,18 @@ day = (day < 10 ? "0" : "") + day;
 hour = (hour < 10 ? "0" : "") + hour;
 min = (min < 10 ? "0" : "") + min;
 
-var currentDay = year + "-" + month + "-" + day,
-    displayTime = hour + ":" + min; 
-
-document.getElementById('setDateInput').value = currentDay;      
-document.getElementById("setTimeInput").value = displayTime;
+return {'currentDay': year + "-" + month + "-" + day,
+    'displayTime': hour + ":" + min}; 
+}
+let newDate = new Date();
+document.getElementById('setDateInput').value = formatCorrectlyDate(newDate).currentDay; 
+let maxDate = new Date(newDate); 
+maxDate.setDate(maxDate.getDate()+15); 
+let minDate = new Date(newDate); 
+minDate.setDate(minDate.getDate()-15);
+document.getElementById('setDateInput').max = formatCorrectlyDate(maxDate).currentDay;
+document.getElementById('setDateInput').min = formatCorrectlyDate(minDate).currentDay;  
+document.getElementById("setTimeInput").value = formatCorrectlyDate(newDate).displayTime;
 
 
 document.getElementById('buttonRefresh').addEventListener('click', (event) => getPossibleTripList(saveResultChosen, false));

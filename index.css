@@ -105,6 +105,14 @@ tr:hover{
     color: orange;
     text-shadow: 2px 1px 2px #0000008a;
 }
+#searchInputMarkerDepart{
+    font-size: 29px;
+    position: absolute;
+    left: 15px;
+    top: 11px;
+    color: #4264fb;
+    text-shadow: 2px 1px 2px #0000008a;
+}
 div.mapboxgl-ctrl-geocoder.mapboxgl-ctrl input[type="text"].mapboxgl-ctrl-geocoder--input{
     height: 50px;
     margin-left: 40px;
@@ -317,6 +325,14 @@ svg.mapboxgl-ctrl-geocoder--icon-close{
     border-left: 13px solid transparent;
     z-index: 150;
 }
+@media (max-width: 666px) {  
+    #panelSetTime{
+        margin-left: calc(66% - 29px);
+    }
+    #panelSetTime::before{
+        right: 7%;
+    }
+}
 #panelSettings{
     margin-left: 60%;
     /*display: inline-block;*/
@@ -356,4 +372,19 @@ svg.mapboxgl-ctrl-geocoder--icon-close{
     line-height: 50px;
     font-size: x-large;
     display: none;
+}
+.normalTrans{
+    transition: bottom 1.5s ease 0s;
+}
+.longerTrans {
+    transition: bottom 1.5s ease 10s;
+}
+.busMarker {
+    /* background-image: url('https://docs.mapbox.com/mapbox-gl-js/assets/washington-monument.jpg');
+    background-size: cover;*/
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    cursor: pointer;
+    font-size: x-large;
 }
